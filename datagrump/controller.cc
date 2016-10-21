@@ -2,7 +2,6 @@
 
 #include "controller.hh"
 #include "timestamp.hh"
-#include "cnpy.h"
 
 #define DEBUGGING if (debug_)
 
@@ -46,7 +45,10 @@ void Controller::ack_received(
         /* when the ack was received (by sender) */
         const uint64_t timestamp_ack_received)
 {
-    //uint64_t rtt = timestamp_ack_received - send_timestamp_acked;
+    if (sequence_number_acked != next_expected_ack)
+    {
+        cout << "dropped" << endl;
+    }
 
     DEBUGGING
     {

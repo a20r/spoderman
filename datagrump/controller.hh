@@ -22,6 +22,8 @@ private:
     // Current window size
     unsigned int cur_ws = 10;
 
+    uint64_t next_expected_ack = 0;
+
 public:
     Controller(const bool debug);
 

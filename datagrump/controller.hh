@@ -2,7 +2,7 @@
 #define CONTROLLER_HH
 
 #include <cstdint>
-#include <vector>
+#include <deque>
 
 using namespace std;
 
@@ -17,12 +17,13 @@ private:
     int ai = 1;
 
     // Multiplicative decrease
-    double md = 0.5;
+    double md = 0.1;
 
     // Current window size
     unsigned int cur_ws = 10;
 
-    uint64_t next_expected_ack = 0;
+    uint64_t delay_thresh = 60;
+    bool just_reset = false;
 
 public:
     Controller(const bool debug);

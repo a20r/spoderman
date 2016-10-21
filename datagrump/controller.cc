@@ -18,7 +18,6 @@ unsigned int Controller::window_size()
         cerr << "At time " << timestamp_ms()
             << " window size is " << cur_ws << endl;
     }
-
     return cur_ws;
 }
 
@@ -45,9 +44,15 @@ void Controller::ack_received(
         /* when the ack was received (by sender) */
         const uint64_t timestamp_ack_received)
 {
-    if (sequence_number_acked != next_expected_ack)
+    uint64_t rtt = timestamp_ack_received - send_timestamp_acked;
+
+    if (rtt > delay_thresh)
     {
-        cout << "dropped" << endl;
+        cur_ws = 10;
+    }
+    else
+    {
+        cur_ws += ai;
     }
 
     DEBUGGING

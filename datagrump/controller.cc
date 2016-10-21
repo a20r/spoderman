@@ -4,6 +4,8 @@
 #include "timestamp.hh"
 #include "cnpy.h"
 
+#define DEBUGGING if (debug_)
+
 using namespace std;
 
 Controller::Controller(const bool debug)
@@ -14,7 +16,8 @@ unsigned int Controller::window_size()
 {
   unsigned int the_window_size = 50;
 
-  if (debug_) {
+  DEBUGGING
+  {
     cerr << "At time " << timestamp_ms()
 	 << " window size is " << the_window_size << endl;
   }
@@ -28,7 +31,8 @@ void Controller::datagram_was_sent(
         /* in milliseconds */
 		const uint64_t send_timestamp)
 {
-  if (debug_) {
+  DEBUGGING
+  {
     cerr << "At time " << send_timestamp
 	 << " sent datagram " << sequence_number << endl;
   }
@@ -46,7 +50,8 @@ void Controller::ack_received(
 {
     //uint64_t rtt = timestamp_ack_received - send_timestamp_acked;
 
-  if (debug_) {
+  DEBUGGING
+  {
     cerr << "At time " << timestamp_ack_received
 	 << " received ack for datagram " << sequence_number_acked
 	 << " (send @ time " << send_timestamp_acked

@@ -14,15 +14,13 @@ Controller::Controller(const bool debug)
 
 unsigned int Controller::window_size()
 {
-  unsigned int the_window_size = 50;
-
   DEBUGGING
   {
     cerr << "At time " << timestamp_ms()
-	 << " window size is " << the_window_size << endl;
+	 << " window size is " << cur_ws << endl;
   }
 
-  return the_window_size;
+  return cur_ws;
 }
 
 void Controller::datagram_was_sent(

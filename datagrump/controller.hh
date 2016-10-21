@@ -20,7 +20,7 @@ private:
   double md = 0.5;
 
   // Current window size
-  unsigned int cur_ws;
+  unsigned int cur_ws = 10;
 
 public:
   Controller(const bool debug);

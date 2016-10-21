@@ -14,13 +14,13 @@ Controller::Controller(const bool debug)
 
 unsigned int Controller::window_size()
 {
-  DEBUGGING
-  {
-    cerr << "At time " << timestamp_ms()
-	 << " window size is " << cur_ws << endl;
-  }
+    DEBUGGING
+    {
+        cerr << "At time " << timestamp_ms()
+            << " window size is " << cur_ws << endl;
+    }
 
-  return cur_ws;
+    return cur_ws;
 }
 
 void Controller::datagram_was_sent(
@@ -29,11 +29,11 @@ void Controller::datagram_was_sent(
         /* in milliseconds */
 		const uint64_t send_timestamp)
 {
-  DEBUGGING
-  {
-    cerr << "At time " << send_timestamp
-	 << " sent datagram " << sequence_number << endl;
-  }
+    DEBUGGING
+    {
+        cerr << "At time " << send_timestamp
+            << " sent datagram " << sequence_number << endl;
+    }
 }
 
 void Controller::ack_received(
@@ -48,17 +48,17 @@ void Controller::ack_received(
 {
     //uint64_t rtt = timestamp_ack_received - send_timestamp_acked;
 
-  DEBUGGING
-  {
-    cerr << "At time " << timestamp_ack_received
-	 << " received ack for datagram " << sequence_number_acked
-	 << " (send @ time " << send_timestamp_acked
-	 << ", received @ time " << recv_timestamp_acked << " by receiver's clock)"
-	 << endl;
-  }
+    DEBUGGING
+    {
+        cerr << "At time " << timestamp_ack_received
+        << " received ack for datagram " << sequence_number_acked
+        << " (send @ time " << send_timestamp_acked
+        << ", received @ time " << recv_timestamp_acked << " by receiver's clock)"
+        << endl;
+    }
 }
 
 unsigned int Controller::timeout_ms()
 {
-  return 1000;
+    return 1000;
 }

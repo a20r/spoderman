@@ -1,5 +1,5 @@
 #include <iostream>
-
+#include <cmath>
 #include "controller.hh"
 #include "timestamp.hh"
 
@@ -44,15 +44,17 @@ void Controller::ack_received(
         /* when the ack was received (by sender) */
         const uint64_t timestamp_ack_received)
 {
-    uint64_t rtt = timestamp_ack_received - send_timestamp_acked;
-
-    if (rtt > delay_thresh)
+    if (counter == 0)
     {
-        cur_ws = 10;
+        start_time = timestamp_ack_received;
     }
-    else
+
+    if (++counter > 10)
     {
-        cur_ws += ai;
+        uint64_t end_time = timestamp_ack_received;
+        link_rate = counter / (double) (end_time - start_time);
+        counter = 0;
+        cout << link_rate << endl;
     }
 
     DEBUGGING

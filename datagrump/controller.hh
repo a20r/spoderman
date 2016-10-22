@@ -20,10 +20,14 @@ private:
     double md = 0.1;
 
     // Current window size
-    unsigned int cur_ws = 10;
+    int cur_ws = 10;
 
-    uint64_t delay_thresh = 60;
-    bool just_reset = false;
+    uint64_t desired_rtt = 70;
+    uint64_t last_ts = 0;
+    double Kp = 0.01, Ki = 0.1, Kd = 0.05;
+    double link_rate = 0.0;
+    int counter = 0;
+    uint64_t start_time = 0;
 
 public:
     Controller(const bool debug);

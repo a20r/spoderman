@@ -97,8 +97,6 @@ void Controller::ack_received(
     std::size_t arm = packetToArm[sequence_number_acked];
     float reward = (1.0/float(timestamp_ack_received - send_timestamp_acked)) / (1000.0*probabilities[arm]);
 
-    std::cout << "timeDiff: " << timeDiff << std::endl;
-
     weights[arm] *= exp(gamma * reward / K);
     std::cout << "probabilities: " << probabilities[arm] << std::endl;
     std::cout << "reward: " << reward << std::endl;

@@ -16,14 +16,16 @@ Controller::Controller(const bool debug)
     is_window_set(false),
     K(MAX_WINDOW / DELTA_WINDOW), // K denotes the number of arms
     gamma(min(1.0, sqrt( (float(K * log(K))) / ((exp(1) - 1)* G)))),
-    weights(K, 1) // Initialize the weights to 1.
+    weights(K, 1), // Initialize the weights to 1.
+    packetToArm(),
+    distribution()
 {   
 }
 
 void Controller::compute_probabilities() 
 {
     distribution = std::discrete_distribution<>(weights.begin(), weights.end());
-    
+
     // sumWeights = 0;
     // for (std::size_t i = 0; i < K; ++i) {
     //     sumWeights += weights[i];

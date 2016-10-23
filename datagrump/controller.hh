@@ -45,7 +45,7 @@ private:
     // std::vector<float> probabilities;
 
     // Map of each packet identifier to corresponding "arm."
-    static std::unordered_map<uint64_t, std::size_t> packetToArm;
+    std::unordered_map<uint64_t, std::size_t> packetToArm;
     std::discrete_distribution<> distribution;
 
 public:

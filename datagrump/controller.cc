@@ -88,9 +88,9 @@ void Controller::ack_received(
 {
 
     // To-do: consider rescaling the "reward" based on what happened previously.
-    arm = packetToArm[sequence_number_acked];
-    reward = (recv_timestamp_acked - send_timestamp_acked) / probabilities[arm];
-    weights[arm] *= exp(gamma * reward / K);
+    // arm = packetToArm[sequence_number_acked];
+    // reward = (recv_timestamp_acked - send_timestamp_acked) / probabilities[arm];
+    // weights[arm] *= exp(gamma * reward / K);
 
     DEBUGGING
     {

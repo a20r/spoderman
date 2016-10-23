@@ -28,7 +28,7 @@ Controller::Controller(const bool debug)
 }
 
 void Controller::reset_weights() {
-    for (int i = 0; i < weights.size(); ++i) {
+    for (std::size_t i = 0; i < weights.size(); ++i) {
         weights[i] = weights.size() / (i + 1);
     }
 }

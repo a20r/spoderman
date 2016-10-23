@@ -48,7 +48,7 @@ void Controller::compute_probabilities()
 
 std::size_t Controller::arm_to_congestion_window(std::size_t arm) {
     std::size_t lower = arm * DELTA_WINDOW;
-    std::size_t upper = arm * (DELTA_WINDOW + 1);
+    std::size_t upper = arm * (DELTA_WINDOW) + DELTA_WINDOW;
 
     std::uniform_int_distribution<> dis(lower, upper);
 

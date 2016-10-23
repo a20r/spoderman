@@ -17,6 +17,7 @@ Controller::Controller(const bool debug)
     K(MAX_WINDOW / DELTA_WINDOW), // K denotes the number of arms
     gamma(min(1.0, sqrt( (float(K * log(K))) / ((exp(1) - 1)* G)))),
     weights(K, 1), // Initialize the weights to 1.
+    gen(rd()),
     packetToArm(),
     distribution()
 {   
@@ -33,14 +34,16 @@ void Controller::compute_probabilities()
     for (auto prob : probabilities) {
         std::cout << prob << std::endl;
     }
-    // sumWeights = 0;
-    // for (std::size_t i = 0; i < K; ++i) {
-    //     sumWeights += weights[i];
-    // }
+}
 
-    // for (std::size_t i = 0; i < K; ++i) {
-    //     probabilities[i] = (1 - gamma) * weights[i] / sumWeights + gamma / K;
-    // }
+std::size_t Controller::arm_to_congestion_window(std::size_t arm) {
+    std::size_t lower = arm * DELTA_WINDOW;
+    std::size_t upper = arm * (DELTA_WINDOW + 1);
+
+    std::uniform_int_distribution<> dis(lower, upper);
+
+    // Generate a number uniformly at random from [lower, upper].
+    return static_cast<std::size_t>(dis(gen));
 }
 
 unsigned int Controller::window_size()
@@ -48,7 +51,6 @@ unsigned int Controller::window_size()
     if (!is_window_set) {   
         compute_probabilities();
 
-        is_window_set = true;
     }
 
     DEBUGGING
@@ -65,6 +67,8 @@ void Controller::datagram_was_sent(
         /* in milliseconds */
 		const uint64_t send_timestamp)
 {
+    packetToArm[sequence_number] = cur_arm;
+
     DEBUGGING
     {
         cerr << "At time " << send_timestamp
@@ -84,9 +88,9 @@ void Controller::ack_received(
 {
 
     // To-do: consider rescaling the "reward" based on what happened previously.
-    // arm = packetToArm[sequence_number_acked];
-    // reward = (recv_timestamp_acked - send_timestamp_acked) / probabilities[arm];
-    // weights[arm] *= exp(gamma * reward / K);
+    arm = packetToArm[sequence_number_acked];
+    reward = (recv_timestamp_acked - send_timestamp_acked) / probabilities[arm];
+    weights[arm] *= exp(gamma * reward / K);
 
     DEBUGGING
     {

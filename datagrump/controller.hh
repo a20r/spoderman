@@ -17,7 +17,7 @@ private:
     // Maps a multi-armed bandit arm to a randomly drawn congestion window in 
     // congestion window in the interval
     // [arm * DELTA_WINDOW, arm * DELTA_WINDOW + DELTA_WINDOW]
-    uint64_t arm_to_congestion_window(uint64_t arm);
+    std::size_t arm_to_congestion_window(uint64_t arm);
     void compute_probabilities();
 
     static const std::size_t MAX_WINDOW = 100;
@@ -41,8 +41,8 @@ private:
     // List of weights for each arm.
     std::vector<float> weights;
 
-    // // List of probabilities for each arm.
-    // std::vector<float> probabilities;
+    std::random_device rd;
+    std::mt19937 gen;
 
     // Map of each packet identifier to corresponding "arm."
     std::unordered_map<uint64_t, std::size_t> packetToArm;

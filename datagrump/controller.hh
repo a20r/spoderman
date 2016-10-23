@@ -33,10 +33,10 @@ private:
     std::size_t numPackets = 0;
 
     // Replan sequence after packet ID.
-    uint64_t replan = 1;
+    uint64_t replan = 50;
 
     // Current arm.
-    std::size_t cur_arm = 5;
+    std::size_t cur_arm = 2;
 
     // Number of arms.
     std::size_t K;

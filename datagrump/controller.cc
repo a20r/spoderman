@@ -23,6 +23,7 @@ Controller::Controller(const bool debug)
     distribution()
 {   
     compute_probabilities();
+    cur_arm = floor(cur_ws / DELTA_WINDOW);
 }
 
 void Controller::compute_probabilities() 

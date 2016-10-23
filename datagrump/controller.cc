@@ -56,7 +56,7 @@ void Controller::ack_received(
         cur_ws += ai;
     }
 
-    cur_ws = round(cur_ws);
+    cur_ws = max(ceil(cur_ws), 1);
 
     DEBUGGING
     {

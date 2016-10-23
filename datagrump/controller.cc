@@ -48,7 +48,6 @@ std::size_t Controller::arm_to_congestion_window(std::size_t arm) {
     return static_cast<std::size_t>(max(1, dis(gen)));
 }
 
-
 unsigned int Controller::window_size()
 {   
     // if (!is_window_set) {   
@@ -96,7 +95,7 @@ void Controller::ack_received(
     // To-do: consider rescaling the "reward" based on what happened previously.
     auto probabilities = distribution.probabilities();
     std::size_t arm = packetToArm[sequence_number_acked];
-    float reward = uint64_t(timestamp_ack_received - send_timestamp_acked) / (1000*probabilities[arm]);
+    float reward = (1/uint64_t(timestamp_ack_received - send_timestamp_acked)) / (1000*probabilities[arm]);
     uint64_t timeDiff = timestamp_ack_received - send_timestamp_acked;
     std::cout << "timeDiff: " << timeDiff << std::endl;
 

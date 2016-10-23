@@ -59,7 +59,7 @@ void Controller::ack_received(
     }
 
     // Round up the window size and ensure that it is non-zero.
-    cur_ws = max(ceil(cur_ws), 1);
+    cur_ws = std::max(ceil(cur_ws), 1);
 
     DEBUGGING
     {

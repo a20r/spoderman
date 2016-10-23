@@ -98,6 +98,7 @@ void Controller::ack_received(
     std::size_t arm = packetToArm[sequence_number_acked];
     float reward = float(recv_timestamp_acked - send_timestamp_acked) / probabilities[arm];
     weights[arm] *= exp(gamma * reward / K);
+    std::cout << "probabilities: " << probabilities[arm] << std::endl;
     std::cout << "reward: " << reward << std::endl;
     std::cout << "gamma: " << gamma << std::endl;
     std::cout << weights[arm] << std::endl;
@@ -106,6 +107,7 @@ void Controller::ack_received(
         compute_probabilities();
         std::size_t arm = distribution(gen);
         std::cout << "Randomly generated arm " << arm << std::endl;
+        cur_arm = arm;
         cur_ws = arm_to_congestion_window(arm);
         std::cout << "Corresponding congestion window " << cur_ws << std::endl;
         replan = sequence_number_acked + cur_ws;

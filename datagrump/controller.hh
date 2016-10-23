@@ -22,7 +22,7 @@ private:
 
     static const std::size_t MAX_WINDOW = 60;
     static const std::size_t DELTA_WINDOW = 5;
-    static constexpr float G = 10000;
+    static constexpr float G = 1000;
 
     bool debug_;
     bool is_window_set;

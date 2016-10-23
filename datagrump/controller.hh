@@ -22,6 +22,7 @@ private:
     // Current window size
     int cur_ws = 1;
 
+    uint64_t delay_thresh = 60;
     uint64_t desired_rtt = 70;
     uint64_t last_ts = 0;
     double Kp = 0.01, Ki = 0.1, Kd = 0.05;

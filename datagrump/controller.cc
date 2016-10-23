@@ -22,7 +22,8 @@ Controller::Controller(const bool debug)
 
 void Controller::compute_probabilities() 
 {
-    distribution = std::make_shared<std::discrete_distribution<>>(weights.begin(), weights.end());
+    distribution = std::discrete_distribution<>(weights.begin(), weights.end());
+    
     // sumWeights = 0;
     // for (std::size_t i = 0; i < K; ++i) {
     //     sumWeights += weights[i];

@@ -20,7 +20,7 @@ private:
     std::size_t arm_to_congestion_window(uint64_t arm);
     void compute_probabilities();
 
-    static const std::size_t MAX_WINDOW = 40;
+    static const std::size_t MAX_WINDOW = 30;
     static const std::size_t DELTA_WINDOW = 5;
     static constexpr float G = 1000;
 
@@ -28,7 +28,7 @@ private:
     bool is_window_set;
 
     // Current window size
-    std::size_t cur_ws = 1;
+    std::size_t cur_ws = 100;
 
     std::size_t numPackets = 0;
 

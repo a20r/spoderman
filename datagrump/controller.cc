@@ -27,10 +27,10 @@ void Controller::compute_probabilities()
     distribution = std::discrete_distribution<>(weights.begin(), weights.end());
     probabilities = distribution.probabilities();
 
-    for (weight : weights) {
+    for (auto weight : weights) {
         std::cout << weight << std::endl;
     }
-    for (prob : probabilities) {
+    for (auto prob : probabilities) {
         std::cout << prob << std::endl;
     }
     // sumWeights = 0;

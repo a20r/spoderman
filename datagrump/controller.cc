@@ -95,8 +95,8 @@ void Controller::ack_received(
     // To-do: consider rescaling the "reward" based on what happened previously.
     auto probabilities = distribution.probabilities();
     std::size_t arm = packetToArm[sequence_number_acked];
-    float reward = (1/uint64_t(timestamp_ack_received - send_timestamp_acked)) / (1000*probabilities[arm]);
-    uint64_t timeDiff = timestamp_ack_received - send_timestamp_acked;
+    float reward = (1.0/float(timestamp_ack_received - send_timestamp_acked)) / (1000.0*probabilities[arm]);
+
     std::cout << "timeDiff: " << timeDiff << std::endl;
 
     weights[arm] *= exp(gamma * reward / K);

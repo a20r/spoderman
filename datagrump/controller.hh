@@ -20,7 +20,7 @@ private:
     std::size_t arm_to_congestion_window(uint64_t arm);
     void compute_probabilities();
 
-    static const std::size_t MAX_WINDOW = 100;
+    static const std::size_t MAX_WINDOW = 60;
     static const std::size_t DELTA_WINDOW = 5;
     static constexpr float G = 120;
 
@@ -29,6 +29,9 @@ private:
 
     // Current window size
     std::size_t cur_ws = 1;
+
+    // Replan sequence after packet ID.
+    uint64_t replan = 1;
 
     // Current arm.
     std::size_t cur_arm = 0;

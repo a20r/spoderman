@@ -17,6 +17,7 @@ private:
     // Maps a multi-armed bandit arm to a randomly drawn congestion window in 
     // congestion window in the interval
     // [arm * DELTA_WINDOW, arm * DELTA_WINDOW + DELTA_WINDOW]
+    void reset_weights();
     std::size_t arm_to_congestion_window(uint64_t arm);
     void compute_probabilities();
 

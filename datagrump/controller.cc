@@ -22,8 +22,15 @@ Controller::Controller(const bool debug)
     packetToArm(),
     distribution()
 {   
+    reset_weights();
     compute_probabilities();
     cur_arm = floor(cur_ws / DELTA_WINDOW);
+}
+
+void Controller::reset_weights() {
+    for (int i = 0; i < weights.size(); ++i) {
+        weights[i] = weights.size() / (i + 1);
+    }
 }
 
 void Controller::compute_probabilities() 
@@ -126,7 +133,7 @@ void Controller::ack_received(
     ++numPackets;
 
     if (numPackets % 500 == 0)
-        std::fill(weights.begin(), weights.end(), 1);
+        reset_weights();
 
     //std::cout << "Num packets received " << ++numPackets << std::endl;
     DEBUGGING

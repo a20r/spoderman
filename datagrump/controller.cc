@@ -1,7 +1,9 @@
 #include <iostream>
 #include <cmath>
+#include <algorithm>
 #include "controller.hh"
 #include "timestamp.hh"
+
 
 #define DEBUGGING if (debug_)
 
@@ -56,6 +58,7 @@ void Controller::ack_received(
         cur_ws += ai;
     }
 
+    // Round up the window size and ensure that it is non-zero.
     cur_ws = max(ceil(cur_ws), 1);
 
     DEBUGGING

@@ -22,6 +22,7 @@ Controller::Controller(const bool debug)
     packetToArm(),
     distribution()
 {   
+    compute_probabilities();
 }
 
 void Controller::compute_probabilities() 
@@ -97,6 +98,9 @@ void Controller::ack_received(
     std::size_t arm = packetToArm[sequence_number_acked];
     float reward = float(recv_timestamp_acked - send_timestamp_acked) / probabilities[arm];
     weights[arm] *= exp(gamma * reward / K);
+    std::cout << "reward: " << reward << std::endl;
+    std::cout << "gamma: " << gamma << std::endl;
+    std::cout << weights[arm] << std::endl;
 
     if (replan <= sequence_number_acked) {
         compute_probabilities();

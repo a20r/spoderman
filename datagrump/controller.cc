@@ -1,6 +1,8 @@
 #include <iostream>
 #include <cmath>
 #include <algorithm>
+#include <vector>
+#include <unordered_map>
 #include "controller.hh"
 #include "timestamp.hh"
 
@@ -10,11 +12,35 @@
 using namespace std;
 
 Controller::Controller(const bool debug)
-  : debug_(debug)
-{}
+  : debug_(debug).
+    is_window_set(false),
+    K(MAX_WINDOW / DELTA_WINDOW), // K denotes the number of arms
+    gamma(min(1.0, sqrt( (float(K * log(K))) / ((exp(1) - 1)* G)))),
+    weights(K, 1) // Initialize the weights to 1.
+{   
+}
+
+void Controller:compute_probabilities() 
+{
+    distribution = std::discrete_distribution<>(weights);
+    // sumWeights = 0;
+    // for (std::size_t i = 0; i < K; ++i) {
+    //     sumWeights += weights[i];
+    // }
+
+    // for (std::size_t i = 0; i < K; ++i) {
+    //     probabilities[i] = (1 - gamma) * weights[i] / sumWeights + gamma / K;
+    // }
+}
 
 unsigned int Controller::window_size()
-{
+{   
+    if (!is_window_set) {   
+        compute_probabilities();
+
+        is_window_set = true;
+    }
+
     DEBUGGING
     {
         cerr << "At time " << timestamp_ms()
@@ -46,20 +72,11 @@ void Controller::ack_received(
         /* when the ack was received (by sender) */
         const uint64_t timestamp_ack_received)
 {
-    uint64_t rtt = timestamp_ack_received - send_timestamp_acked;
 
-    if (rtt > delay_thresh)
-    {
-        cur_ws *= md;
-
-    }
-    else
-    {
-        cur_ws += ai;
-    }
-
-    // Round up the window size and ensure that it is non-zero.
-    cur_ws = std::max(uint64_t(ceil(cur_ws)), uint64_t(1));
+    // To-do: consider rescaling the "reward" based on what happened previously.
+    // arm = packetToArm[sequence_number_acked];
+    // reward = (recv_timestamp_acked - send_timestamp_acked) / probabilities[arm];
+    // weights[arm] *= exp(gamma * reward / K);
 
     DEBUGGING
     {

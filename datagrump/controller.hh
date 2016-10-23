@@ -3,6 +3,7 @@
 
 #include <cstdint>
 #include <deque>
+#include <random>
 
 using namespace std;
 
@@ -11,25 +12,40 @@ using namespace std;
 class Controller
 {
 private:
+    // Maps a multi-armed bandit arm to a randomly drawn congestion window in 
+    // congestion window in the interval
+    // [arm * DELTA_WINDOW, arm * DELTA_WINDOW + DELTA_WINDOW]
+    uint64_t arm_to_congestion_window(uint64_t arm);
+    void compute_probabilities();
+
+    static const std::size_t MAX_WINDOW = 100;
+    static const std::size_t DELTA_WINDOW = 5;
+    static const float G = 120;
+    
+
     bool debug_;
+    bool is_window_set;
 
-    // Additive increase
-    int ai = 1;
-
-    // Multiplicative decrease
-    double md = 0.75;
-
+    float gamma;
     // Current window size
-    int cur_ws = 1;
+    std::size_t cur_ws = 1;
 
-    uint64_t delay_thresh = 50;
+    // Current arm.
+    std::size_t cur_arm;
 
-    uint64_t desired_rtt = 70;
-    uint64_t last_ts = 0;
-    double Kp = 0.01, Ki = 0.1, Kd = 0.05;
-    double link_rate = 0.0;
-    int counter = 0;
-    uint64_t start_time = 0;
+    // Number of arms.
+    std::size_t K;
+
+    // List of weights for each arm.
+    std::vector<float> weights;
+
+    // List of probabilities for each arm.
+    std::vector<float> probabilities;
+
+    // Map of each packet identifier to corresponding "arm."
+    std::unordered_map<uint64_t> packetToArm;
+
+    std::discrete_distribution<> distribution;
 
 public:
     Controller(const bool debug);

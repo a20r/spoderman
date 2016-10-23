@@ -20,7 +20,7 @@ Controller::Controller(const bool debug)
 {   
 }
 
-void Controller:compute_probabilities() 
+void Controller::compute_probabilities() 
 {
     distribution = std::discrete_distribution<>(weights);
     // sumWeights = 0;

@@ -30,7 +30,7 @@ private:
     std::size_t cur_ws = 1;
 
     // Current arm.
-    std::size_t cur_arm;
+    std::size_t cur_arm = 0;
 
     // Number of arms.
     std::size_t K;

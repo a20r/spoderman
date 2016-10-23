@@ -93,9 +93,9 @@ void Controller::ack_received(
 {
 
     // To-do: consider rescaling the "reward" based on what happened previously.
-    auto probabilities = distribution.probabilities;
-    arm = packetToArm[sequence_number_acked];
-    reward = (recv_timestamp_acked - send_timestamp_acked) / probabilities[arm];
+    auto probabilities = distribution.probabilities();
+    std::size_t arm = packetToArm[sequence_number_acked];
+    float reward = float(recv_timestamp_acked - send_timestamp_acked) / probabilities[arm];
     weights[arm] *= exp(gamma * reward / K);
 
     if (replan <= sequence_number_acked) {

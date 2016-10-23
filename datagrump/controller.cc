@@ -29,7 +29,8 @@ Controller::Controller(const bool debug)
 
 void Controller::reset_weights() {
     for (std::size_t i = 0; i < weights.size(); ++i) {
-        weights[i] = weights.size() / (i + 1);
+        //weights[i] = weights.size() / (i + 1);
+        weights[i] = 1;
     }
 }
 
@@ -132,7 +133,7 @@ void Controller::ack_received(
     }
     ++numPackets;
 
-    if (numPackets % 1000 == 0)
+    if (numPackets % 100 == 0)
         reset_weights();
 
     //std::cout << "Num packets received " << ++numPackets << std::endl;

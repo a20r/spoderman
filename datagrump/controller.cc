@@ -95,7 +95,7 @@ void Controller::ack_received(
     // To-do: consider rescaling the "reward" based on what happened previously.
     auto probabilities = distribution.probabilities();
     std::size_t arm = packetToArm[sequence_number_acked];
-    float reward = (1.0/max(1.0, double(abs(timestamp_ack_received - send_timestamp_acked) - 100))) / (1000*probabilities[arm]);
+    float reward = (1.0/max(1.0, double(abs(timestamp_ack_received - send_timestamp_acked) - 100))) / (100*probabilities[arm]);
 
     weights[arm] *= exp(gamma * reward / K);
     std::cout << "probabilities: " << probabilities[arm] << std::endl;
@@ -113,6 +113,8 @@ void Controller::ack_received(
         replan = sequence_number_acked + cur_ws;
     }
 
+    if (numPackets % 1000 == 0)
+        std::fill(weights.begin(), weights.end(), 1);
 
     std::cout << "Num packets received " << ++numPackets << std::endl;
     DEBUGGING

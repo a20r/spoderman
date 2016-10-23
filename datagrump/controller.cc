@@ -113,6 +113,8 @@ void Controller::ack_received(
         replan = sequence_number_acked + cur_ws;
     }
 
+
+    std::cout << "Num packets received " << ++numPackets << std::endl;
     DEBUGGING
     {
         cerr << "At time " << timestamp_ack_received

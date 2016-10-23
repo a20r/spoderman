@@ -30,6 +30,8 @@ private:
     // Current window size
     std::size_t cur_ws = 1;
 
+    std::size_t numPackets = 0;
+
     // Replan sequence after packet ID.
     uint64_t replan = 1;
 

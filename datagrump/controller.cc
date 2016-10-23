@@ -120,7 +120,7 @@ void Controller::ack_received(
         replan = sequence_number_acked + cur_ws;
     }
 
-    if (numPackets % 1000 == 0)
+    if (numPackets % 250 == 0)
         std::fill(weights.begin(), weights.end(), 1);
 
     std::cout << "Num packets received " << ++numPackets << std::endl;

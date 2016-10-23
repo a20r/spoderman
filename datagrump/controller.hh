@@ -21,14 +21,14 @@ private:
     void compute_probabilities();
 
     static const std::size_t MAX_WINDOW = 30;
-    static const std::size_t DELTA_WINDOW = 5;
+    static const std::size_t DELTA_WINDOW = 2;
     static constexpr float G = 10000;
 
     bool debug_;
     bool is_window_set;
 
     // Current window size
-    std::size_t cur_ws = 100;
+    std::size_t cur_ws = 10;
 
     std::size_t numPackets = 0;
 
@@ -36,7 +36,7 @@ private:
     uint64_t replan = 1;
 
     // Current arm.
-    std::size_t cur_arm = 0;
+    std::size_t cur_arm = 5;
 
     // Number of arms.
     std::size_t K;

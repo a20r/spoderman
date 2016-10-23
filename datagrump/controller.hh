@@ -45,7 +45,7 @@ private:
 
     // Map of each packet identifier to corresponding "arm."
     static std::unordered_map<uint64_t, std::size_t> packetToArm;
-    std::shared_ptr<std::discrete_distribution<>> distribution;
+    static std::shared_ptr<std::discrete_distribution<>> distribution;
 
 public:
     Controller(const bool debug);

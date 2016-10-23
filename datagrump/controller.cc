@@ -99,16 +99,16 @@ void Controller::ack_received(
     uint64_t rtt = timestamp_ack_received - send_timestamp_acked;
 
     float reward = 0;
-    if (rtt < 100) {
+    if (rtt < 75) {
         reward = (1.0 / rtt) / (probabilities[arm]);
     }
     //float reward = (1.0/max(1.0, double(abs(timestamp_ack_received - send_timestamp_acked) - 100))) / (10*probabilities[arm]);
 
     weights[arm] *= exp(gamma * reward / K);
-    std::cout << "probabilities: " << probabilities[arm] << std::endl;
-    std::cout << "reward: " << reward << std::endl;
-    std::cout << "gamma: " << gamma << std::endl;
-    std::cout << weights[arm] << std::endl;
+    // std::cout << "probabilities: " << probabilities[arm] << std::endl;
+    // std::cout << "reward: " << reward << std::endl;
+    // std::cout << "gamma: " << gamma << std::endl;
+    // std::cout << weights[arm] << std::endl;
 
     if (replan <= sequence_number_acked) {
         compute_probabilities();
@@ -120,7 +120,7 @@ void Controller::ack_received(
         replan = sequence_number_acked + cur_ws;
     }
 
-    if (numPackets % 250 == 0)
+    if (numPackets % 200 == 0)
         std::fill(weights.begin(), weights.end(), 1);
 
     std::cout << "Num packets received " << ++numPackets << std::endl;

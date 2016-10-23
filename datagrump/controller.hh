@@ -20,9 +20,9 @@ private:
     std::size_t arm_to_congestion_window(uint64_t arm);
     void compute_probabilities();
 
-    static const std::size_t MAX_WINDOW = 30;
-    static const std::size_t DELTA_WINDOW = 2;
-    static constexpr float G = 10000;
+    static const std::size_t MAX_WINDOW = 50;
+    static const std::size_t DELTA_WINDOW = 5;
+    static constexpr float G = 1000;
 
     bool debug_;
     bool is_window_set;

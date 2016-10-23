@@ -14,10 +14,10 @@ private:
     bool debug_;
 
     // Additive increase
-    int ai = 5;
+    int ai = 1;
 
     // Multiplicative decrease
-    double md = 0.5;
+    double md = 0.75;
 
     // Current window size
     int cur_ws = 1;

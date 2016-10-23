@@ -17,6 +17,7 @@ Controller::Controller(const bool debug)
     K(MAX_WINDOW / DELTA_WINDOW), // K denotes the number of arms
     gamma(min(1.0, sqrt( (float(K * log(K))) / ((exp(1) - 1)* G)))),
     weights(K, 1), // Initialize the weights to 1.
+    rd(),
     gen(rd()),
     packetToArm(),
     distribution()

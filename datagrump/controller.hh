@@ -5,6 +5,7 @@
 #include <deque>
 #include <random>
 #include <memory>
+#include <unordered_map>
 
 using namespace std;
 

@@ -14,15 +14,15 @@ private:
     bool debug_;
 
     // Additive increase
-    int ai = 1;
+    int ai = 5;
 
     // Multiplicative decrease
-    double md = 0.1;
+    double md = 0.5;
 
     // Current window size
     int cur_ws = 1;
 
-    uint64_t delay_thresh = 100;
+    uint64_t delay_thresh = 50;
 
     uint64_t desired_rtt = 70;
     uint64_t last_ts = 0;

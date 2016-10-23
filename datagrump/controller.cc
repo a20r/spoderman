@@ -47,15 +47,16 @@ std::size_t Controller::arm_to_congestion_window(std::size_t arm) {
     return static_cast<std::size_t>(max(1, dis(gen)));
 }
 
+
 unsigned int Controller::window_size()
 {   
-    if (!is_window_set) {   
-        compute_probabilities();
-        std::size_t arm = distribution(gen);
-        std::cout << "Randomly generated arm " << arm << std::endl;
-        cur_ws = arm_to_congestion_window(arm);
-        std::cout << "Corresponding congestion window " << cur_ws << std::endl;
-    }
+    // if (!is_window_set) {   
+    //     compute_probabilities();
+    //     std::size_t arm = distribution(gen);
+    //     std::cout << "Randomly generated arm " << arm << std::endl;
+    //     cur_ws = arm_to_congestion_window(arm);
+    //     std::cout << "Corresponding congestion window " << cur_ws << std::endl;
+    // }
 
     DEBUGGING
     {
@@ -95,7 +96,14 @@ void Controller::ack_received(
     // arm = packetToArm[sequence_number_acked];
     // reward = (recv_timestamp_acked - send_timestamp_acked) / probabilities[arm];
     // weights[arm] *= exp(gamma * reward / K);
-
+    if (!is_window_set) {   
+        compute_probabilities();
+        std::size_t arm = distribution(gen);
+        std::cout << "Randomly generated arm " << arm << std::endl;
+        cur_ws = arm_to_congestion_window(arm);
+        std::cout << "Corresponding congestion window " << cur_ws << std::endl;
+    }
+    
     DEBUGGING
     {
         cerr << "At time " << timestamp_ack_received

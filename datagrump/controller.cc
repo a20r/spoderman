@@ -109,8 +109,8 @@ void Controller::ack_received(
 
     float reward = 0;
     if (rtt < 100) {
-        reward = (10.0 / rtt) / (probabilities[arm]);
-    } else if (rtt > 200) {
+        reward = (1.0 / rtt) / (probabilities[arm]);
+    } else if (rtt > 150) {
         cur_ws = 1;
         replan = sequence_number_acked + 1;
     }
@@ -133,7 +133,7 @@ void Controller::ack_received(
     }
     ++numPackets;
 
-    if (numPackets % 100 == 0)
+    if (numPackets % 1000 == 0)
         reset_weights();
 
     //std::cout << "Num packets received " << ++numPackets << std::endl;

@@ -51,7 +51,10 @@ unsigned int Controller::window_size()
 {   
     if (!is_window_set) {   
         compute_probabilities();
-
+        arm = distribution(gen);
+        std::cout << "Randomly generated arm " << arm << std::endl;
+        cur_ws = arm_to_congestion_window(arm);
+        std::cout << "Corresponding congestion window" << cur_ws << std::endl;
     }
 
     DEBUGGING

@@ -119,11 +119,12 @@ void Controller::ack_received(
         std::cout << "Corresponding congestion window " << cur_ws << std::endl;
         replan = sequence_number_acked + cur_ws;
     }
-
+    ++numPackets;
+    
     if (numPackets % 200 == 0)
         std::fill(weights.begin(), weights.end(), 1);
 
-    std::cout << "Num packets received " << ++numPackets << std::endl;
+    //std::cout << "Num packets received " << ++numPackets << std::endl;
     DEBUGGING
     {
         cerr << "At time " << timestamp_ack_received

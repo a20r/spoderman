@@ -25,7 +25,14 @@ Controller::Controller(const bool debug)
 void Controller::compute_probabilities() 
 {
     distribution = std::discrete_distribution<>(weights.begin(), weights.end());
+    probabilities = distribution.probabilities();
 
+    for (weight : weights) {
+        std::cout << weight << std::endl;
+    }
+    for (prob : probabilities) {
+        std::cout << prob << std::endl;
+    }
     // sumWeights = 0;
     // for (std::size_t i = 0; i < K; ++i) {
     //     sumWeights += weights[i];

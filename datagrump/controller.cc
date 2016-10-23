@@ -25,7 +25,7 @@ Controller::Controller(const bool debug)
 void Controller::compute_probabilities() 
 {
     distribution = std::discrete_distribution<>(weights.begin(), weights.end());
-    probabilities = distribution.probabilities();
+    auto probabilities = distribution.probabilities();
 
     for (auto weight : weights) {
         std::cout << weight << std::endl;

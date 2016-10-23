@@ -17,10 +17,10 @@ private:
     int ai = 1;
 
     // Multiplicative decrease
-    double md = 0.1;
+    double md = 0.5;
 
     // Current window size
-    int cur_ws = 10;
+    int cur_ws = 1;
 
     uint64_t desired_rtt = 70;
     uint64_t last_ts = 0;

@@ -44,18 +44,19 @@ void Controller::ack_received(
         /* when the ack was received (by sender) */
         const uint64_t timestamp_ack_received)
 {
-    if (counter == 0)
+    uint64_t rtt = timestamp_ack_received - send_timestamp_acked;
+
+    if (rtt > delay_thresh)
     {
-        start_time = timestamp_ack_received;
+        cur_ws *= md;
+
+    }
+    else
+    {
+        cur_ws += ai;
     }
 
-    if (++counter > 10)
-    {
-        uint64_t end_time = timestamp_ack_received;
-        link_rate = counter / (double) (end_time - start_time);
-        counter = 0;
-        cout << link_rate << endl;
-    }
+    cur_ws = round(cur_ws);
 
     DEBUGGING
     {

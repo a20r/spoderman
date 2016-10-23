@@ -40,8 +40,8 @@ private:
     // List of weights for each arm.
     std::vector<float> weights;
 
-    // List of probabilities for each arm.
-    std::vector<float> probabilities;
+    // // List of probabilities for each arm.
+    // std::vector<float> probabilities;
 
     // Map of each packet identifier to corresponding "arm."
     std::unordered_map<uint64_t, std::size_t> packetToArm;

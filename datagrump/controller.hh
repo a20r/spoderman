@@ -4,6 +4,7 @@
 #include <cstdint>
 #include <deque>
 #include <random>
+#include <memory>
 
 using namespace std;
 
@@ -25,7 +26,6 @@ private:
     bool debug_;
     bool is_window_set;
 
-    float gamma;
     // Current window size
     std::size_t cur_ws = 1;
 
@@ -35,6 +35,8 @@ private:
     // Number of arms.
     std::size_t K;
 
+    float gamma;
+
     // List of weights for each arm.
     std::vector<float> weights;
 
@@ -43,7 +45,7 @@ private:
 
     // Map of each packet identifier to corresponding "arm."
     std::unordered_map<uint64_t, std::size_t> packetToArm;
-    std::discrete_distribution<> distribution;
+    std::shared_ptr<std::discrete_distribution<>> distribution;
 
 public:
     Controller(const bool debug);

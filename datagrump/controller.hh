@@ -20,8 +20,7 @@ private:
 
     static const std::size_t MAX_WINDOW = 100;
     static const std::size_t DELTA_WINDOW = 5;
-    static const float G = 120;
-    
+    static constexpr float G = 120;
 
     bool debug_;
     bool is_window_set;
@@ -43,8 +42,7 @@ private:
     std::vector<float> probabilities;
 
     // Map of each packet identifier to corresponding "arm."
-    std::unordered_map<uint64_t> packetToArm;
-
+    std::unordered_map<uint64_t, std::size_t> packetToArm;
     std::discrete_distribution<> distribution;
 
 public:

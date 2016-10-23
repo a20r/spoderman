@@ -12,7 +12,7 @@
 using namespace std;
 
 Controller::Controller(const bool debug)
-  : debug_(debug).
+  : debug_(debug),
     is_window_set(false),
     K(MAX_WINDOW / DELTA_WINDOW), // K denotes the number of arms
     gamma(min(1.0, sqrt( (float(K * log(K))) / ((exp(1) - 1)* G)))),

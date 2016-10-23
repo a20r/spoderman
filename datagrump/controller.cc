@@ -94,17 +94,18 @@ void Controller::ack_received(
 {
 
     // To-do: consider rescaling the "reward" based on what happened previously.
-    if (sequence_number_acked >= 1) {
-        auto probabilities = distribution.probabilities();
-        std::size_t arm = packetToArm[sequence_number_acked];
-        float reward = float(recv_timestamp_acked - send_timestamp_acked) / probabilities[arm];
-        weights[arm] *= exp(gamma * reward / K);
-        std::cout << "probabilities: " << probabilities[arm] << std::endl;
-        std::cout << "reward: " << reward << std::endl;
-        std::cout << "gamma: " << gamma << std::endl;
-        std::cout << weights[arm] << std::endl;
-    }
-    
+    auto probabilities = distribution.probabilities();
+    std::size_t arm = packetToArm[sequence_number_acked];
+    float reward = float(recv_timestamp_acked - send_timestamp_acked) / probabilities[arm];
+    float timeDiff = float(recv_timestamp_acked - send_timestamp_acked);
+    std::cout << "timeDiff: " << timeDiff << std::endl;
+
+    weights[arm] *= exp(-gamma * reward / K);
+    std::cout << "probabilities: " << probabilities[arm] << std::endl;
+    std::cout << "reward: " << reward << std::endl;
+    std::cout << "gamma: " << gamma << std::endl;
+    std::cout << weights[arm] << std::endl;
+
     if (replan <= sequence_number_acked) {
         compute_probabilities();
         std::size_t arm = distribution(gen);

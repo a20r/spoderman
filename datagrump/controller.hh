@@ -17,12 +17,12 @@ private:
     int ai = 1;
 
     // Multiplicative decrease
-    double md = 0.5;
+    double md = 0.1;
 
     // Current window size
     int cur_ws = 1;
 
-    uint64_t delay_thresh = 75;
+    uint64_t delay_thresh = 100;
 
     uint64_t desired_rtt = 70;
     uint64_t last_ts = 0;

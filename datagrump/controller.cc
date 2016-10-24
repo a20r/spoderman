@@ -116,7 +116,7 @@ void Controller::ack_received(
     std::cout << "rrt: " << rtt << std::endl;
     float reward = 0;
     if (rtt < 150) {
-        reward = (10.0 / rtt) / (probabilities[arm]);
+        reward = (1.0 / rtt) / (probabilities[arm]);
     }
     //float reward = (1.0/max(1.0, double(abs(timestamp_ack_received - send_timestamp_acked) - 100))) / (10*probabilities[arm]);
 

@@ -176,7 +176,7 @@ void Controller::ack_received(
         // packet associated with the congestion window.
         //double timeFrame = timestamp_ack_received - packetToSendTime[sequence_number_acked];
         double timeFrame = recv_timestamp_acked - last_ts;
-        double RATE_THRESHOLD = 0.3;
+        double RATE_THRESHOLD = 0.1;
         std::vector<double> probabilities = distribution.probabilities();
         double rate = congestionWindow / timeFrame;
         double reward = (rate - RATE_THRESHOLD) / probabilities[arm];
@@ -188,13 +188,13 @@ void Controller::ack_received(
         // Distribute the reward
         DistributeReward(arm, reward);
 
-        // std::cout << "Time frame: " << timeFrame << std::endl;
-        // std::cout << "Rate: " << rate << std::endl;
-        // std::cout << "probability of this arm: " << probabilities[arm] << std::endl;
-        // std::cout << "reward: " << reward << std::endl;
-        // std::cout << "gamma: " << gamma << std::endl;
-        // std::cout << "Multiplicative factor: " << multiplicativeFactor << std::endl;
-        // std::cout << "weights: " << weights[arm] << std::endl;
+        std::cout << "Time frame: " << timeFrame << std::endl;
+        std::cout << "Rate: " << rate << std::endl;
+        std::cout << "probability of this arm: " << probabilities[arm] << std::endl;
+        std::cout << "reward: " << reward << std::endl;
+        std::cout << "gamma: " << gamma << std::endl;
+        std::cout << "Multiplicative factor: " << multiplicativeFactor << std::endl;
+        std::cout << "weights: " << weights[arm] << std::endl;
 
         last_ts = recv_timestamp_acked;
     }

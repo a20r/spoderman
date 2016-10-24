@@ -23,7 +23,7 @@ private:
 
     static const std::size_t MAX_WINDOW = 30;
     static const std::size_t DELTA_WINDOW = 5;
-    static constexpr float G = 10000;
+    static constexpr float G = 1000;
 
     bool debug_;
     bool is_window_set;
@@ -35,6 +35,7 @@ private:
 
     // Replan sequence after packet ID.
     uint64_t replan = 1;
+    uint64_t last_ts = 0;
 
     // Current arm.
     std::size_t cur_arm = 2;

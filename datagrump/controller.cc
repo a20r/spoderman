@@ -101,13 +101,19 @@ void Controller::ack_received(
         const uint64_t timestamp_ack_received)
 {
 
+    // RECALCULATION OF CWND SHOULD OCCUR IN THE SENDING
+    // CALCULATION OF REWARD IS NOT CORRECT
+    // THROUGHPUT = CWND / RTT
+    uint64_t rtt = (recv_timestamp_acked - last_ts);
+    last_ts = recv_timestamp_acked;
+
     // To-do: consider rescaling the "reward" based on what happened previously.
     ++numPackets;
     auto probabilities = distribution.probabilities();
     std::size_t arm = packetToArm[sequence_number_acked];
 
-    uint64_t rtt = timestamp_ack_received - send_timestamp_acked;
-
+    //uint64_t rtt = timestamp_ack_received - send_timestamp_acked;
+    std::cout << "rrt: " << rtt << std::endl;
     float reward = 0;
     if (rtt < 150) {
         reward = (10.0 / rtt) / (probabilities[arm]);

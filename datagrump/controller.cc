@@ -180,7 +180,7 @@ void Controller::ack_received(
 
         //if (rate < )
         // Distribute the reward
-        DistributeReward(arm, rate - RATE_THRESHOLD);
+        DistributeReward(arm, rate);
 
         std::cout << "Time frame: " << timeFrame << std::endl;
         std::cout << "Rate: " << rate << std::endl;
@@ -194,11 +194,11 @@ void Controller::ack_received(
         last_ts = timestamp_ack_received;
     }
 
-    if (numPackets % 1000 == 0)
-    {
-        std::cout << "\nResetting weights\n" << std::endl;
-        reset_weights();
-    }
+    // if (numPackets % 1000 == 0)
+    // {
+    //     std::cout << "\nResetting weights\n" << std::endl;
+    //     reset_weights();
+    // }
 
     // // To-do: consider rescaling the "reward" based on what happened previously.
     // ++numPackets;

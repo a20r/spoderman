@@ -55,6 +55,12 @@ void Controller::reset_weights() {
     }
 }
 
+void Controller::reset_weights_low() {
+    for (std::size_t i = 0; i < weights.size(); ++i) {
+        weights[i] = 1/(i + 1);
+    }    
+}
+
 void Controller::compute_probabilities() 
 {
     distribution = std::discrete_distribution<>(weights.begin(), weights.end());
@@ -180,6 +186,7 @@ void Controller::ack_received(
 
         if (rate < 0.1) {
             std::cout << "\n\nExtremely low rate: " << rate << " cwnd = " << cur_ws << std::endl << std::endl;
+            reset_weights_low();
         }
 
         DistributeReward(arm, 10*(rate - RATE_THRESHOLD));

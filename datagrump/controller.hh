@@ -20,6 +20,7 @@ private:
     // [arm * DELTA_WINDOW, arm * DELTA_WINDOW + DELTA_WINDOW]
     void Exp3();
     void reset_weights();
+    void reset_weights_low();
     std::size_t arm_to_congestion_window(uint64_t arm);
     void compute_probabilities();
     void DistributeReward(std::size_t arm, double rate);

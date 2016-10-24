@@ -202,7 +202,7 @@ void Controller::ack_received(
         last_ts = recv_timestamp_acked;
     }
 
-    if (numPackets % 10000 == 0)
+    if (numPackets % 1000 == 0)
     {
         std::cout << "\nResetting weights\n" << std::endl;
         reset_weights();

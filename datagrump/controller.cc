@@ -170,7 +170,7 @@ void Controller::ack_received(
         // packet associated with the congestion window.
         //double timeFrame = timestamp_ack_received - packetToSendTime[sequence_number_acked];
         double timeFrame = timestamp_ack_received - last_ts;
-        //double RATE_THRESHOLD = 0.1;
+        double RATE_THRESHOLD = 0.1;
         double rate = congestionWindow / timeFrame;
 
         //double reward = (rate - RATE_THRESHOLD) / probabilities[arm];
@@ -180,10 +180,9 @@ void Controller::ack_received(
 
         if (rate < 0.1) {
             std::cout << "\n\nExtremely low rate: " << rate << " cwnd = " << cur_ws << std::endl << std::endl;
-
         }
 
-        DistributeReward(arm, rate);
+        DistributeReward(arm, 10*(rate - RATE_THRESHOLD));
 
         std::cout << "Time frame: " << timeFrame << std::endl;
         std::cout << "Rate: " << rate << std::endl;
@@ -197,11 +196,11 @@ void Controller::ack_received(
         last_ts = timestamp_ack_received;
     }
 
-    // if (numPackets % 1000 == 0)
-    // {
-    //     std::cout << "\nResetting weights\n" << std::endl;
-    //     reset_weights();
-    // }
+    if (numPackets % 1000 == 0)
+    {
+        std::cout << "\nResetting weights\n" << std::endl;
+        reset_weights();
+    }
 
     // // To-do: consider rescaling the "reward" based on what happened previously.
     // ++numPackets;

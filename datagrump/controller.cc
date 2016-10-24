@@ -120,6 +120,7 @@ void Controller::ack_received(
         reward = (1.0 / interArrivalTime) / (probabilities[arm]);
     } else {
         std::cout << "interarrivalTime " << interArrivalTime << std::endl;
+        reset_weights();
     }
     //float reward = (1.0/max(1.0, double(abs(timestamp_ack_received - send_timestamp_acked) - 100))) / (10*probabilities[arm]);
 
@@ -137,11 +138,11 @@ void Controller::ack_received(
         cur_arm = arm;
         cur_ws = arm_to_congestion_window(arm);
         std::cout << "Corresponding congestion window " << cur_ws << std::endl;
-        std::cout << "Total reward thus far " << totalReward << std::endl;
+        // std::cout << "Total reward thus far " << totalReward << std::endl;
         replan = sequence_number_acked + cur_ws;
     }
 
-    if (numPackets % 10000 == 0)
+    if (numPackets % 1000 == 0)
         reset_weights();
 
     //std::cout << "Num packets received " << ++numPackets << std::endl;

@@ -136,6 +136,15 @@ void Controller::datagram_was_sent(
     }
 }
 
+
+void Controller::DistributeReward(std::size_t arm, double reward) {
+    for (std::size_t i = 0; i < K; ++i) {
+        std::size_t distance = abs(arm - i);
+        double thisReward = reward / exp(distance);
+        double multiplicativeFactor = gamma * thisReward / K;
+        weights[i] *= exp(multiplicativeFactor); 
+    }
+}
 // RECALCULATION OF CWND SHOULD OCCUR IN THE SENDING
 // CALCULATION OF REWARD IS NOT CORRECT
 // THROUGHPUT = CWND / RTT
@@ -173,7 +182,10 @@ void Controller::ack_received(
         double reward = (RATE_THRESHOLD - rate) / probabilities[arm];
 
         double multiplicativeFactor = gamma * reward / K;
-        weights[arm] *= exp(multiplicativeFactor); 
+        //weights[arm] *= exp(multiplicativeFactor); 
+
+        // Distribute the reward
+        DistributeReward(arm, reward);
 
         std::cout << "Time frame: " << timeFrame << std::endl;
         std::cout << "Rate: " << rate << std::endl;
@@ -186,7 +198,7 @@ void Controller::ack_received(
         last_ts = recv_timestamp_acked;
     }
 
-    if (numPackets % 1000 == 0)
+    if (numPackets % 10000 == 0)
     {
         std::cout << "\nResetting weights\n" << std::endl;
         reset_weights();

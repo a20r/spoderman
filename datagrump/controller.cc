@@ -172,7 +172,14 @@ void Controller::ack_received(
         double rate = congestionWindow / timeFrame;
         double reward = rate / probabilities[arm];
 
-        weights[arm] *= exp(gamma * reward / K);   
+        weights[arm] *= exp(gamma * reward / K); 
+
+        std::cout << "Time frame: " << timeFrame << std::endl;
+        std::cout << "Rate: " << rate << std::endl;
+        std::cout << "probability of this arm: " << probabilities[arm] << std::endl;
+        std::cout << "reward: " << reward << std::endl;
+        std::cout << "gamma: " << gamma << std::endl;
+        std::cout << "weights: " << weights[arm] << std::endl;
     }
 
     // // To-do: consider rescaling the "reward" based on what happened previously.

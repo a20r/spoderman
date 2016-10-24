@@ -137,9 +137,11 @@ void Controller::datagram_was_sent(
 }
 
 
-void Controller::DistributeReward(std::size_t arm, double reward) {
+void Controller::DistributeReward(std::size_t arm, double rate) {
     for (std::size_t i = 0; i < K; ++i) {
         std::size_t distance = abs(arm - i);
+
+        double reward = rate / probabilities[i];
         double thisReward = reward / exp(distance);
         double multiplicativeFactor = gamma * thisReward / K;
         weights[i] *= exp(multiplicativeFactor); 
@@ -179,14 +181,15 @@ void Controller::ack_received(
         double RATE_THRESHOLD = 0.1;
         std::vector<double> probabilities = distribution.probabilities();
         double rate = congestionWindow / timeFrame;
-        double reward = (rate - RATE_THRESHOLD) / probabilities[arm];
+
+        //double reward = (rate - RATE_THRESHOLD) / probabilities[arm];
 
         //double multiplicativeFactor = gamma * reward / K;
         //weights[arm] *= exp(multiplicativeFactor); 
 
         //if (rate < )
         // Distribute the reward
-        DistributeReward(arm, reward);
+        DistributeReward(arm, rate - RATE_THRESHOLD);
 
         std::cout << "Time frame: " << timeFrame << std::endl;
         std::cout << "Rate: " << rate << std::endl;
@@ -199,7 +202,7 @@ void Controller::ack_received(
         last_ts = recv_timestamp_acked;
     }
 
-    if (numPackets % 10000 == 0)
+    if (numPackets % 100 == 0)
     {
         std::cout << "\nResetting weights\n" << std::endl;
         reset_weights();

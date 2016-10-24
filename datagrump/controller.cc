@@ -115,8 +115,10 @@ void Controller::ack_received(
     //uint64_t rtt = timestamp_ack_received - send_timestamp_acked;
     //std::cout << "rrt: " << rtt << std::endl;
     float reward = 0;
-    if (interArrivalTime < 150) {
+    if (interArrivalTime < 50) {
         reward = (1.0 / interArrivalTime) / (probabilities[arm]);
+    } else {
+        std::cout << "interarrivalTime " << interArrivalTime << std::endl;
     }
     //float reward = (1.0/max(1.0, double(abs(timestamp_ack_received - send_timestamp_acked) - 100))) / (10*probabilities[arm]);
 
@@ -138,7 +140,7 @@ void Controller::ack_received(
         replan = sequence_number_acked + cur_ws;
     }
 
-    if (numPackets % 1000 == 0)
+    if (numPackets % 10000 == 0)
         reset_weights();
 
     //std::cout << "Num packets received " << ++numPackets << std::endl;

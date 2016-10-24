@@ -44,7 +44,7 @@ void Controller::compute_probabilities()
     // }
     for (std::size_t i = 0; i < probabilities.size(); ++i) {
         auto prob = probabilities[i];
-        std::cout << "Prob[" i << "]: " << prob << std::endl;
+        std::cout << "Prob[" << i << "]: " << prob << std::endl;
     }
 }
 

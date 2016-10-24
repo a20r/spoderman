@@ -166,25 +166,27 @@ void Controller::ack_received(
         // frame between the sending of the last packet and the receiving of the last
         // packet associated with the congestion window.
         double timeFrame = timestamp_ack_received - packetToSendTime[sequence_number_acked];
-        double RATE_THRESHOLD = 0.1;
+        double RATE_THRESHOLD = 0.5;
         std::vector<double> probabilities = distribution.probabilities();
         double rate = congestionWindow / timeFrame;
         double reward = (RATE_THRESHOLD - rate) / probabilities[arm];
 
-        weights[arm] *= exp(gamma * reward / K); 
+        double multiplicativeFactor = gamma * reward / K;
+        weights[arm] *= exp(multiplicativeFactor); 
 
         std::cout << "Time frame: " << timeFrame << std::endl;
         std::cout << "Rate: " << rate << std::endl;
         std::cout << "probability of this arm: " << probabilities[arm] << std::endl;
         std::cout << "reward: " << reward << std::endl;
         std::cout << "gamma: " << gamma << std::endl;
+        std::cout << "Multiplicative factor: " << multiplicativeFactor << std::endl;
         std::cout << "weights: " << weights[arm] << std::endl;
+    }
 
-        if (numPackets % 1000 == 0)
-        {
-            std::cout << "\nResetting weights\n" << std::endl;
-            reset_weights();
-        }
+    if (numPackets % 1000 == 0)
+    {
+        std::cout << "\nResetting weights\n" << std::endl;
+        reset_weights();
     }
 
     // // To-do: consider rescaling the "reward" based on what happened previously.

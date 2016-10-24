@@ -180,8 +180,11 @@ void Controller::ack_received(
         std::cout << "gamma: " << gamma << std::endl;
         std::cout << "weights: " << weights[arm] << std::endl;
 
-        if (numPackets % 100 == 0)
+        if (numPackets % 1000 == 0)
+        {
+            std::cout << "\nResetting weights\n" << std::endl;
             reset_weights();
+        }
     }
 
     // // To-do: consider rescaling the "reward" based on what happened previously.

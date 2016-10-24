@@ -169,7 +169,7 @@ void Controller::ack_received(
         // frame between the sending of the last packet and the receiving of the last
         // packet associated with the congestion window.
         //double timeFrame = timestamp_ack_received - packetToSendTime[sequence_number_acked];
-        double timeFrame = recv_timestamp_acked - last_ts;
+        double timeFrame = timestamp_ack_received - last_ts;
         double RATE_THRESHOLD = 0.1;
         double rate = congestionWindow / timeFrame;
 

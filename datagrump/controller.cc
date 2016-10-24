@@ -123,6 +123,7 @@ void Controller::ack_received(
         //reset_weights();
         cur_ws = 1;
         cur_arm = 0;
+        return;
     }
     //float reward = (1.0/max(1.0, double(abs(timestamp_ack_received - send_timestamp_acked) - 100))) / (10*probabilities[arm]);
 

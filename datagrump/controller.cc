@@ -46,7 +46,7 @@ void Controller::compute_probabilities()
     }
 
     distribution = std::discrete_distribution<>(newWeights.begin(), newWeights.end());
-    
+
     for (std::size_t i = 0; i < probabilities.size(); ++i) {
         auto prob = probabilities[i];
         std::cout << "Prob[" << i << "]: " << prob << std::endl;
@@ -130,7 +130,6 @@ void Controller::ack_received(
         cur_arm = 0;
         return;
     }
-    //float reward = (1.0/max(1.0, double(abs(timestamp_ack_received - send_timestamp_acked) - 100))) / (10*probabilities[arm]);
 
     weights[arm] *= exp(gamma * reward / K);
     totalReward += reward;
@@ -145,8 +144,8 @@ void Controller::ack_received(
         std::cout << "Randomly generated arm " << arm << std::endl;
         cur_arm = arm;
         cur_ws = arm_to_congestion_window(arm);
-        std::cout << "Corresponding congestion window " << cur_ws << std::endl;
         // std::cout << "Total reward thus far " << totalReward << std::endl;
+        std::cout << "Corresponding congestion window " << cur_ws << std::endl;
         replan = sequence_number_acked + cur_ws;
     }
 

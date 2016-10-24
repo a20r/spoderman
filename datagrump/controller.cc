@@ -151,7 +151,8 @@ void Controller::ack_received(
     lastSingleTs = recv_timestamp_acked;
 
     if (interArrivalTime > 100) {
-        Exp3();
+        reset_weights_low();
+        cur_ws /= 2;
     }
 
     ++numPackets;

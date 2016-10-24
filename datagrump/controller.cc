@@ -184,7 +184,7 @@ void Controller::ack_received(
         //double multiplicativeFactor = gamma * reward / K;
         //weights[arm] *= exp(multiplicativeFactor); 
 
-        if (rate < 0.01) {
+        if (rate < 0.05) {
             std::cout << "\n\nExtremely low rate: " << rate << " cwnd = " << cur_ws << std::endl << std::endl;
             reset_weights_low();
         }

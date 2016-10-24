@@ -22,7 +22,7 @@ private:
     void compute_probabilities();
 
     static const std::size_t MAX_WINDOW = 30;
-    static const std::size_t DELTA_WINDOW = 2;
+    static const std::size_t DELTA_WINDOW = 5;
     static constexpr float G = 10000;
 
     bool debug_;

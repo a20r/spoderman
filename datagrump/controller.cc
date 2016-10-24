@@ -152,9 +152,9 @@ void Controller::ack_received(
 
     if (interArrivalTime > 50) {
         reset_weights_low();
-        //Exp3();
-        cur_ws = 1;
-        std::cout << "interArrivalTime: " << send_timestamp_acked << std::endl;
+        Exp3();
+        //cur_ws = 1;
+        //std::cout << "interArrivalTime: " << send_timestamp_acked << std::endl;
     }
 
     ++numPackets;

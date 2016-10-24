@@ -170,7 +170,7 @@ void Controller::ack_received(
         // packet associated with the congestion window.
         //double timeFrame = timestamp_ack_received - packetToSendTime[sequence_number_acked];
         double timeFrame = timestamp_ack_received - last_ts;
-        double RATE_THRESHOLD = 0.1;
+        //double RATE_THRESHOLD = 0.1;
         double rate = congestionWindow / timeFrame;
 
         //double reward = (rate - RATE_THRESHOLD) / probabilities[arm];

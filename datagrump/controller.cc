@@ -39,12 +39,12 @@ void Controller::compute_probabilities()
     distribution = std::discrete_distribution<>(weights.begin(), weights.end());
     auto probabilities = distribution.probabilities();
 
-    for (auto weight : weights) {
-        std::cout << weight << std::endl;
-    }
-    for (auto prob : probabilities) {
-        std::cout << prob << std::endl;
-    }
+    // for (auto weight : weights) {
+    //     std::cout << weight << std::endl;
+    // }
+    // for (auto prob : probabilities) {
+    //     std::cout << prob << std::endl;
+    // }
 }
 
 std::size_t Controller::arm_to_congestion_window(std::size_t arm) {
@@ -104,7 +104,7 @@ void Controller::ack_received(
     // RECALCULATION OF CWND SHOULD OCCUR IN THE SENDING
     // CALCULATION OF REWARD IS NOT CORRECT
     // THROUGHPUT = CWND / RTT
-    uint64_t rtt = max(recv_timestamp_acked - last_ts, uint64_t(1));
+    uint64_t interArrivalTime = max(recv_timestamp_acked - last_ts, uint64_t(1));
     last_ts = recv_timestamp_acked;
 
     // To-do: consider rescaling the "reward" based on what happened previously.
@@ -113,18 +113,19 @@ void Controller::ack_received(
     std::size_t arm = packetToArm[sequence_number_acked];
 
     //uint64_t rtt = timestamp_ack_received - send_timestamp_acked;
-    std::cout << "rrt: " << rtt << std::endl;
+    //std::cout << "rrt: " << rtt << std::endl;
     float reward = 0;
-    if (rtt < 150) {
-        reward = (1.0 / rtt) / (probabilities[arm]);
+    if (interArrivalTime < 150) {
+        reward = (1.0 / interArrivalTime) / (probabilities[arm]);
     }
     //float reward = (1.0/max(1.0, double(abs(timestamp_ack_received - send_timestamp_acked) - 100))) / (10*probabilities[arm]);
 
     weights[arm] *= exp(gamma * reward / K);
-    std::cout << "probabilities: " << probabilities[arm] << std::endl;
-    std::cout << "reward: " << reward << std::endl;
-    std::cout << "gamma: " << gamma << std::endl;
-    std::cout << weights[arm] << std::endl;
+    totalReward += reward;
+    // std::cout << "probabilities: " << probabilities[arm] << std::endl;
+    // std::cout << "reward: " << reward << std::endl;
+    // std::cout << "gamma: " << gamma << std::endl;
+    // std::cout << weights[arm] << std::endl;
 
     if (replan <= sequence_number_acked) {
         compute_probabilities();
@@ -133,10 +134,11 @@ void Controller::ack_received(
         cur_arm = arm;
         cur_ws = arm_to_congestion_window(arm);
         std::cout << "Corresponding congestion window " << cur_ws << std::endl;
+        std::cout << "Total reward thus far " << totalReward << std::endl;
         replan = sequence_number_acked + cur_ws;
     }
 
-    if (numPackets % 200 == 0)
+    if (numPackets % 1000 == 0)
         reset_weights();
 
     //std::cout << "Num packets received " << ++numPackets << std::endl;

@@ -181,7 +181,7 @@ void Controller::ack_received(
         double rate = congestionWindow / timeFrame;
         double reward = (RATE_THRESHOLD - rate) / probabilities[arm];
 
-        double multiplicativeFactor = gamma * reward / K;
+        //double multiplicativeFactor = gamma * reward / K;
         //weights[arm] *= exp(multiplicativeFactor); 
 
         // Distribute the reward

@@ -45,7 +45,7 @@ private:
 
     float gamma;
 
-    float totalReward;
+    float totalReward = 0;
     // List of weights for each arm.
     std::vector<float> weights;
 

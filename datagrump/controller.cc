@@ -56,7 +56,6 @@ void Controller::reset_weights() {
 }
 
 void Controller::reset_weights_low() {
-    double mid = K / 2;
     for (std::size_t i = 0; i < weights.size(); ++i) {
         weights[i] = 1/(i + 1);
     }    

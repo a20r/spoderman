@@ -73,10 +73,10 @@ void Controller::compute_probabilities()
 
     distribution = std::discrete_distribution<>(newWeights.begin(), newWeights.end());
 
-    for (std::size_t i = 0; i < probabilities.size(); ++i) {
-        auto prob = probabilities[i];
-        std::cout << "Prob[" << i << "]: " << prob << std::endl;
-    }
+    // for (std::size_t i = 0; i < probabilities.size(); ++i) {
+    //     auto prob = probabilities[i];
+    //     std::cout << "Prob[" << i << "]: " << prob << std::endl;
+    // }
 }
 
 std::size_t Controller::arm_to_congestion_window(std::size_t arm) {
@@ -107,12 +107,13 @@ void Controller::datagram_was_sent(
 {
     // Should we draw a new arm?
     if (sequence_number == replan) {
-        std::cout << std::endl << "Replanning at sequence number: " 
-                  << sequence_number << std::endl;
+        // std::cout << std::endl << "Replanning at sequence number: " 
+        //           << sequence_number << std::endl;
         // Mark the time that the packet was sent at so that we can
         // compute the reward afterwards.
         packetToSendTime[sequence_number] = send_timestamp;
         Exp3();
+        std::cout << "New congestion window: " << cur_ws << std::endl;
     }
 
     DEBUGGING

@@ -25,10 +25,10 @@ private:
     void compute_probabilities();
     void DistributeReward(std::size_t arm, double rate);
 
-    static const std::size_t MAX_WINDOW = 30;
-    static const std::size_t MIN_WINDOW = 4;
+    static const std::size_t MAX_WINDOW = 20;
+    static const std::size_t MIN_WINDOW = 0;
     static const std::size_t DELTA_WINDOW = 3;
-    static constexpr float G = 1000;
+    static constexpr float G = 100000;
 
     bool debug_;
     bool is_window_set;

@@ -14,7 +14,7 @@ using namespace std;
 Controller::Controller(const bool debug)
   : debug_(debug),
     is_window_set(false),
-    K(MAX_WINDOW / DELTA_WINDOW), // K denotes the number of arms
+    K((MAX_WINDOW - MIN_WINDOW) / DELTA_WINDOW), // K denotes the number of arms
     gamma(min(1.0, sqrt( (float(K * log(K))) / ((exp(1) - 1)* G)))),
     weights(K, 1), // Initialize the weights to 1.
     rd(),
@@ -80,8 +80,8 @@ void Controller::compute_probabilities()
 }
 
 std::size_t Controller::arm_to_congestion_window(std::size_t arm) {
-    std::size_t lower = arm * DELTA_WINDOW;
-    std::size_t upper = arm * (DELTA_WINDOW) + DELTA_WINDOW;
+    std::size_t lower = arm * DELTA_WINDOW + MIN_WINDOW;
+    std::size_t upper = lower + DELTA_WINDOW;
 
     std::uniform_int_distribution<> dis(lower, upper);
 
@@ -184,13 +184,13 @@ void Controller::ack_received(
         //double multiplicativeFactor = gamma * reward / K;
         //weights[arm] *= exp(multiplicativeFactor); 
 
-        if (rate < 0.05) {
+        if (rate < 0.01) {
             std::cout << "\n\nExtremely low rate: " << rate << " cwnd = " << cur_ws << std::endl << std::endl;
             reset_weights_low();
         }
 
         //DistributeReward(arm, 10*(rate - RATE_THRESHOLD));
-        DistributeReward(arm, rate - RATE_THRESHOLD);
+        DistributeReward(arm, rate);
 
         std::cout << "Time frame: " << timeFrame << std::endl;
         std::cout << "Rate: " << rate << std::endl;
@@ -204,7 +204,7 @@ void Controller::ack_received(
         last_ts = timestamp_ack_received;
     }
 
-    if (numPackets % 10000 == 0)
+    if (numPackets % 1000 == 0)
     {
         std::cout << "\nResetting weights\n" << std::endl;
         reset_weights();

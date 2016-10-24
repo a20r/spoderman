@@ -104,7 +104,7 @@ void Controller::ack_received(
     // RECALCULATION OF CWND SHOULD OCCUR IN THE SENDING
     // CALCULATION OF REWARD IS NOT CORRECT
     // THROUGHPUT = CWND / RTT
-    uint64_t rtt = (recv_timestamp_acked - last_ts);
+    uint64_t rtt = max(recv_timestamp_acked - last_ts, uint64_t(1));
     last_ts = recv_timestamp_acked;
 
     // To-do: consider rescaling the "reward" based on what happened previously.

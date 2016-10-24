@@ -117,7 +117,7 @@ void Controller::ack_received(
     //std::cout << "rrt: " << rtt << std::endl;
     float reward = 0;
     if (interArrivalTime < 50) {
-        reward = (1.0 / interArrivalTime) / (probabilities[arm]);
+        reward = (1.0 / (interArrivalTime*cur_ws)) / (probabilities[arm]);
     } else {
         std::cout << "interarrivalTime " << interArrivalTime << std::endl;
         reset_weights();

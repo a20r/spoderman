@@ -150,7 +150,7 @@ void Controller::ack_received(
     uint64_t interArrivalTime = max(recv_timestamp_acked - lastSingleTs, uint64_t(1));
     lastSingleTs = recv_timestamp_acked;
 
-    if (interArrivalTime > 75) {
+    if (interArrivalTime > 100) {
         reset_weights_low();
         //Exp3();
         cur_ws = 1;

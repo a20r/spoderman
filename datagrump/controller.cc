@@ -150,7 +150,7 @@ void Controller::ack_received(
     uint64_t interArrivalTime = max(recv_timestamp_acked - lastSingleTs, uint64_t(1));
     lastSingleTs = recv_timestamp_acked;
 
-    if (interArrivalTime > 100) {
+    if (interArrivalTime > 50) {
         reset_weights_low();
         Exp3();
     }
@@ -178,7 +178,7 @@ void Controller::ack_received(
         //double multiplicativeFactor = gamma * reward / K;
         //weights[arm] *= exp(multiplicativeFactor); 
 
-        if (rate < 0.05) {
+        if (rate < 0.1) {
             std::cout << "\n\nExtremely low rate: " << rate << " cwnd = " << cur_ws << std::endl << std::endl;
             reset_weights_low();
         }

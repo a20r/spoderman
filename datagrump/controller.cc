@@ -91,11 +91,11 @@ std::size_t Controller::arm_to_congestion_window(std::size_t arm) {
 
 unsigned int Controller::window_size()
 {   
-    // DEBUGGING
-    // {
-    //     cerr << "At time " << timestamp_ms()
-    //         << " window size is " << cur_ws << endl;
-    // }
+    DEBUGGING
+    {
+        cerr << "At time " << timestamp_ms()
+            << " window size is " << cur_ws << endl;
+    }
     return cur_ws;
 }
 
@@ -155,7 +155,6 @@ void Controller::ack_received(
         Exp3();
         std::cout << "interArrivalTime: " << send_timestamp_acked << std::endl;
     }
-
 
     ++numPackets;
     // Should we compute the reward?

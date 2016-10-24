@@ -134,7 +134,7 @@ void Controller::ack_received(
         replan = sequence_number_acked + cur_ws;
     }
 
-    if (numPackets % 1000 == 0)
+    if (numPackets % 500 == 0)
         reset_weights();
 
     //std::cout << "Num packets received " << ++numPackets << std::endl;

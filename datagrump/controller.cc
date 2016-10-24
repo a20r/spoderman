@@ -168,8 +168,9 @@ void Controller::ack_received(
         // packet associated with the congestion window.
         double timeFrame = timestamp_ack_received - packetToSendTime[sequence_number_acked];
 
+        std::vector<double> probabilities = distribution.probabilities();
         double rate = congestionWindow / timeFrame;
-        double reward = congestionWindow / probabilities[arm];
+        double reward = rate / probabilities[arm];
 
         weights[arm] *= exp(gamma * reward / K);   
     }

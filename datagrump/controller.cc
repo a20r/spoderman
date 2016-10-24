@@ -179,7 +179,8 @@ void Controller::ack_received(
         //weights[arm] *= exp(multiplicativeFactor); 
 
         if (rate < 0.1) {
-            std::cout << "\n\nExtremely low rate: " << rate << std::endl << std::endl;
+            std::cout << "\n\nExtremely low rate: " << rate << " cwnd = " << cur_cw << std::endl << std::endl;
+
         }
 
         DistributeReward(arm, rate);

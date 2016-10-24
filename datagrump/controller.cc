@@ -153,7 +153,9 @@ void Controller::ack_received(
     if (interArrivalTime > 75) {
         reset_weights_low();
         Exp3();
+        std::cout << "interArrivalTime: " << send_timestamp_acked << std::endl;
     }
+
 
     ++numPackets;
     // Should we compute the reward?

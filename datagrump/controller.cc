@@ -165,8 +165,9 @@ void Controller::ack_received(
         // Reward is computed as the rate of packet acknowledgements in the time
         // frame between the sending of the last packet and the receiving of the last
         // packet associated with the congestion window.
-        double timeFrame = timestamp_ack_received - packetToSendTime[sequence_number_acked];
-        double RATE_THRESHOLD = 0.5;
+        //double timeFrame = timestamp_ack_received - packetToSendTime[sequence_number_acked];
+        double timeFrame = recv_timestamp_acked - last_ts;
+        double RATE_THRESHOLD = 0.2;
         std::vector<double> probabilities = distribution.probabilities();
         double rate = congestionWindow / timeFrame;
         double reward = (RATE_THRESHOLD - rate) / probabilities[arm];
@@ -181,6 +182,8 @@ void Controller::ack_received(
         std::cout << "gamma: " << gamma << std::endl;
         std::cout << "Multiplicative factor: " << multiplicativeFactor << std::endl;
         std::cout << "weights: " << weights[arm] << std::endl;
+
+        last_ts = recv_timestamp_acked;
     }
 
     if (numPackets % 1000 == 0)

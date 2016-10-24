@@ -59,7 +59,6 @@ void Controller::compute_probabilities()
 {
     distribution = std::discrete_distribution<>(weights.begin(), weights.end());
     std::vector<double> probabilities = distribution.probabilities();
-
     std::vector<double> newWeights = probabilities;
 
     for (auto &prob : newWeights) {
@@ -86,14 +85,6 @@ std::size_t Controller::arm_to_congestion_window(std::size_t arm) {
 
 unsigned int Controller::window_size()
 {   
-    // if (!is_window_set) {   
-    //     compute_probabilities();
-    //     std::size_t arm = distribution(gen);
-    //     std::cout << "Randomly generated arm " << arm << std::endl;
-    //     cur_ws = arm_to_congestion_window(arm);
-    //     std::cout << "Corresponding congestion window " << cur_ws << std::endl;
-    // }
-
     // DEBUGGING
     // {
     //     cerr << "At time " << timestamp_ms()
@@ -199,7 +190,8 @@ void Controller::ack_received(
         //std::cout << "Multiplicative factor: " << multiplicativeFactor << std::endl;
         std::cout << "weights: " << weights[arm] << std::endl;
 
-        last_ts = recv_timestamp_acked;
+        //last_ts = recv_timestamp_acked;
+        last_ts = timestamp_ack_received;
     }
 
     if (numPackets % 1000 == 0)

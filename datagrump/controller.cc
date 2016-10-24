@@ -109,7 +109,7 @@ std::size_t Controller::arm_to_congestion_window(std::size_t arm) {
 
     // Generate a number uniformly at random from [lower, upper].
     //return static_cast<std::size_t>(max(1, dis(gen)));
-    return static_cast<std::size_t>(max(0, dis(gen)));
+    return static_cast<std::size_t>(max(1, dis(gen)));
 }
 
 unsigned int Controller::window_size()

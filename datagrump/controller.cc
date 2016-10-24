@@ -102,6 +102,7 @@ void Controller::ack_received(
 {
 
     // To-do: consider rescaling the "reward" based on what happened previously.
+    ++numPackets;
     auto probabilities = distribution.probabilities();
     std::size_t arm = packetToArm[sequence_number_acked];
 
@@ -110,9 +111,10 @@ void Controller::ack_received(
     float reward = 0;
     if (rtt < 100) {
         reward = (1.0 / rtt) / (probabilities[arm]);
-    } else if (rtt > 150) {
+    } else if (rtt > 200) {
         cur_ws = 1;
         replan = sequence_number_acked + 1;
+        return;
     }
     //float reward = (1.0/max(1.0, double(abs(timestamp_ack_received - send_timestamp_acked) - 100))) / (10*probabilities[arm]);
 
@@ -131,7 +133,6 @@ void Controller::ack_received(
         std::cout << "Corresponding congestion window " << cur_ws << std::endl;
         replan = sequence_number_acked + cur_ws;
     }
-    ++numPackets;
 
     if (numPackets % 1000 == 0)
         reset_weights();

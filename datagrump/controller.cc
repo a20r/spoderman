@@ -116,7 +116,7 @@ void Controller::ack_received(
     //uint64_t rtt = timestamp_ack_received - send_timestamp_acked;
     //std::cout << "rrt: " << rtt << std::endl;
     float reward = 0;
-    if (interArrivalTime < 50) {
+    if (interArrivalTime < 20) {
         reward = (1.0 / (interArrivalTime*cur_ws)) / (probabilities[arm]);
     } else {
         std::cout << "interarrivalTime " << interArrivalTime << std::endl;

@@ -37,11 +37,16 @@ void Controller::reset_weights() {
 void Controller::compute_probabilities() 
 {
     distribution = std::discrete_distribution<>(weights.begin(), weights.end());
-    auto probabilities = distribution.probabilities();
+    std::vector<double> probabilities = distribution.probabilities();
 
-    // for (auto weight : weights) {
-    //     std::cout << weight << std::endl;
-    // }
+    std::vector<double> newWeights = probabilities;
+
+    for (auto &prob : newWeights) {
+        prob = (1 - gamma) * prob + gamma / K;    
+    }
+
+    distribution = std::discrete_distribution<>(newWeights.begin(), newWeights.end());
+    
     for (std::size_t i = 0; i < probabilities.size(); ++i) {
         auto prob = probabilities[i];
         std::cout << "Prob[" << i << "]: " << prob << std::endl;

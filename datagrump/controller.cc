@@ -42,9 +42,10 @@ void Controller::compute_probabilities()
     // for (auto weight : weights) {
     //     std::cout << weight << std::endl;
     // }
-    // for (auto prob : probabilities) {
-    //     std::cout << prob << std::endl;
-    // }
+    for (std::size_t i = 0; i < probabilities.size(); ++i) {
+        auto prob = probabilities[i];
+        std::cout << "Prob[" i << "]: " << prob << std::endl;
+    }
 }
 
 std::size_t Controller::arm_to_congestion_window(std::size_t arm) {

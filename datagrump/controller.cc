@@ -178,8 +178,10 @@ void Controller::ack_received(
         //double multiplicativeFactor = gamma * reward / K;
         //weights[arm] *= exp(multiplicativeFactor); 
 
-        //if (rate < )
-        // Distribute the reward
+        if (rate < 0.1) {
+            std::cout << "\n\nExtremely low rate: " << rate << std::endl << std::endl;
+        }
+
         DistributeReward(arm, rate);
 
         std::cout << "Time frame: " << timeFrame << std::endl;

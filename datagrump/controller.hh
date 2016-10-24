@@ -32,7 +32,7 @@ private:
     bool is_window_set;
 
     // Current window size
-    std::size_t cur_ws = 10;
+    std::size_t cur_ws = 0;
 
     std::size_t numPackets = 0;
 

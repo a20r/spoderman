@@ -181,7 +181,7 @@ void Controller::ack_received(
         double timeFrame = recv_timestamp_acked - last_ts;
         double RATE_THRESHOLD = 0.1;
         double rate = congestionWindow / timeFrame;
-        
+
         //double reward = (rate - RATE_THRESHOLD) / probabilities[arm];
 
         //double multiplicativeFactor = gamma * reward / K;
@@ -202,7 +202,7 @@ void Controller::ack_received(
         last_ts = recv_timestamp_acked;
     }
 
-    if (numPackets % 100 == 0)
+    if (numPackets % 10000 == 0)
     {
         std::cout << "\nResetting weights\n" << std::endl;
         reset_weights();

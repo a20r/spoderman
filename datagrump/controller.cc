@@ -57,7 +57,7 @@ void Controller::reset_weights() {
 
 void Controller::reset_weights_low() {
     for (std::size_t i = 0; i < weights.size(); ++i) {
-        weights[i] = 1.0/(i + 1);
+        weights[i] = 1.0/exp(i);
     }    
 }
 
@@ -150,9 +150,10 @@ void Controller::ack_received(
     uint64_t interArrivalTime = max(recv_timestamp_acked - lastSingleTs, uint64_t(1));
     lastSingleTs = recv_timestamp_acked;
 
-    if (interArrivalTime > 100) {
+    if (interArrivalTime > 50) {
         reset_weights_low();
-        cur_ws /= 2;
+        Exp3();
+        //cur_ws /= 2;
     }
 
     ++numPackets;

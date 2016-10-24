@@ -23,7 +23,7 @@ Controller::Controller(const bool debug)
     packetToSendTime(),
     distribution()
 {   
-    reset_weights();
+    reset_weights_low();
     Exp3();
 }
 
@@ -150,7 +150,7 @@ void Controller::ack_received(
     uint64_t interArrivalTime = max(recv_timestamp_acked - lastSingleTs, uint64_t(1));
     lastSingleTs = recv_timestamp_acked;
 
-    if (interArrivalTime > 50) {
+    if (interArrivalTime > 75) {
         reset_weights_low();
         Exp3();
     }

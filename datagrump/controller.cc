@@ -189,13 +189,13 @@ void Controller::ack_received(
         //DistributeReward(arm, 10*(rate - RATE_THRESHOLD));
         DistributeReward(arm, rate);
 
-        std::cout << "Time frame: " << timeFrame << std::endl;
-        std::cout << "Rate: " << rate << std::endl;
-        //std::cout << "probability of this arm: " << probabilities[arm] << std::endl;
-        //std::cout << "reward: " << reward << std::endl;
-        std::cout << "gamma: " << gamma << std::endl;
-        //std::cout << "Multiplicative factor: " << multiplicativeFactor << std::endl;
-        std::cout << "weights: " << weights[arm] << std::endl;
+        // std::cout << "Time frame: " << timeFrame << std::endl;
+        // std::cout << "Rate: " << rate << std::endl;
+        // //std::cout << "probability of this arm: " << probabilities[arm] << std::endl;
+        // //std::cout << "reward: " << reward << std::endl;
+        // std::cout << "gamma: " << gamma << std::endl;
+        // //std::cout << "Multiplicative factor: " << multiplicativeFactor << std::endl;
+        // std::cout << "weights: " << weights[arm] << std::endl;
 
         //last_ts = recv_timestamp_acked;
         //last_ts = timestamp_ack_received;

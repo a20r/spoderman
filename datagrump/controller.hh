@@ -41,6 +41,7 @@ private:
     // Replan sequence after packet ID.
     uint64_t replan = 0;
     uint64_t last_ts = 0;
+    uint64_t lastSingleTs = 0;
 
     // Current arm.
     std::size_t cur_arm = 2;

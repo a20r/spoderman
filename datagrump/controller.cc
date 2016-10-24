@@ -115,17 +115,6 @@ void Controller::datagram_was_sent(
         Exp3();
     }
 
-    // if (replan <= sequence_number_acked) {
-    //     compute_probabilities();
-    //     std::size_t arm = distribution(gen);
-    //     std::cout << "Randomly generated arm " << arm << std::endl;
-    //     cur_arm = arm;
-    //     cur_ws = arm_to_congestion_window(arm);
-    //     // std::cout << "Total reward thus far " << totalReward << std::endl;
-    //     std::cout << "Corresponding congestion window " << cur_ws << std::endl;
-    //     replan = sequence_number_acked + cur_ws;
-    // }
-
     DEBUGGING
     {
         cerr << "At time " << send_timestamp
@@ -158,8 +147,12 @@ void Controller::ack_received(
         /* when the ack was received (by sender) */
         const uint64_t timestamp_ack_received)
 {
-    // uint64_t interArrivalTime = max(recv_timestamp_acked - last_ts, uint64_t(1));
-    // last_ts = recv_timestamp_acked;
+    uint64_t interArrivalTime = max(recv_timestamp_acked - lastSingleTs, uint64_t(1));
+    lastSingleTs = recv_timestamp_acked;
+
+    if (interArrivalTime > 100) {
+        Exp3();
+    }
 
     ++numPackets;
     // Should we compute the reward?
@@ -184,7 +177,7 @@ void Controller::ack_received(
         //double multiplicativeFactor = gamma * reward / K;
         //weights[arm] *= exp(multiplicativeFactor); 
 
-        if (rate < 0.01) {
+        if (rate < 0.05) {
             std::cout << "\n\nExtremely low rate: " << rate << " cwnd = " << cur_ws << std::endl << std::endl;
             reset_weights_low();
         }
@@ -204,11 +197,11 @@ void Controller::ack_received(
         last_ts = timestamp_ack_received;
     }
 
-    if (numPackets % 1000 == 0)
-    {
-        std::cout << "\nResetting weights\n" << std::endl;
-        reset_weights();
-    }
+    // if (numPackets % 1000 == 0)
+    // {
+    //     std::cout << "\nResetting weights\n" << std::endl;
+    //     reset_weights();
+    // }
 
     // // To-do: consider rescaling the "reward" based on what happened previously.
     // ++numPackets;

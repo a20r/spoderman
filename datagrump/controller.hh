@@ -5,6 +5,7 @@
 #include <deque>
 #include <random>
 #include <memory>
+#include <utility>
 #include <unordered_map>
 
 using namespace std;
@@ -17,13 +18,14 @@ private:
     // Maps a multi-armed bandit arm to a randomly drawn congestion window in 
     // congestion window in the interval
     // [arm * DELTA_WINDOW, arm * DELTA_WINDOW + DELTA_WINDOW]
+    void Exp3();
     void reset_weights();
     std::size_t arm_to_congestion_window(uint64_t arm);
     void compute_probabilities();
 
     static const std::size_t MAX_WINDOW = 30;
     static const std::size_t DELTA_WINDOW = 3;
-    static constexpr float G = 1000;
+    static constexpr float G = 10000;
 
     bool debug_;
     bool is_window_set;
@@ -34,7 +36,7 @@ private:
     std::size_t numPackets = 0;
 
     // Replan sequence after packet ID.
-    uint64_t replan = 1;
+    uint64_t replan = 0;
     uint64_t last_ts = 0;
 
     // Current arm.
@@ -52,8 +54,14 @@ private:
     std::random_device rd;
     std::mt19937 gen;
 
-    // Map of each packet identifier to corresponding "arm."
-    std::unordered_map<uint64_t, std::size_t> packetToArm;
+    // Map of each packet identifier to the corresponding
+    // (arm, congestionWindow) pair.
+    std::unordered_map<uint64_t, std::pair<std::size_t, std::size_t>> packetToId;
+
+    std::unordered_map<uint64_t, uint64_t> packetToSendTime;
+
+    // Mapping of each sequence number to the arm associated with the "reward."
+    //std::unordered_map<uint64_t, std::size_t> packetT
     std::discrete_distribution<> distribution;
 
 public:

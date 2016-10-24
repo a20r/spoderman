@@ -19,7 +19,8 @@ Controller::Controller(const bool debug)
     weights(K, 1), // Initialize the weights to 1.
     rd(),
     gen(rd()),
-    packetToArm(),
+    packetToId(),
+    packetToSendTime(),
     distribution()
 {   
     reset_weights();
@@ -27,9 +28,30 @@ Controller::Controller(const bool debug)
     cur_arm = floor(cur_ws / DELTA_WINDOW);
 }
 
+void Controller::Exp3() {
+    // Compute the probabilities associated with drawing each arm.
+    compute_probabilities();
+    // Randomly draw an arm according to the computed distribution.
+    std::size_t arm = distribution(gen);
+    std::cout << "Randomly generated arm " << arm << std::endl;
+    cur_arm = arm;
+
+    // Map the drawn arm to the congestion window.
+    cur_ws = arm_to_congestion_window(arm);
+    std::cout << "Corresponding congestion window " << cur_ws << std::endl;
+
+    // Replan after sending the packet with the following sequence number.
+    replan += cur_ws;
+
+    // "Tag" the packet sequence number with this arm so that the reward is
+    // calculated when the ack for the corresponding packet sequence number
+    // is received.
+    auto armCongestionWindowPair = std::make_pair(cur_arm, cur_ws);
+    packetToId[replan] = armCongestionWindowPair;
+}
+
 void Controller::reset_weights() {
     for (std::size_t i = 0; i < weights.size(); ++i) {
-        //weights[i] = weights.size() / (i + 1);
         weights[i] = 1;
     }
 }
@@ -73,11 +95,11 @@ unsigned int Controller::window_size()
     //     std::cout << "Corresponding congestion window " << cur_ws << std::endl;
     // }
 
-    DEBUGGING
-    {
-        cerr << "At time " << timestamp_ms()
-            << " window size is " << cur_ws << endl;
-    }
+    // DEBUGGING
+    // {
+    //     cerr << "At time " << timestamp_ms()
+    //         << " window size is " << cur_ws << endl;
+    // }
     return cur_ws;
 }
 
@@ -87,7 +109,26 @@ void Controller::datagram_was_sent(
         /* in milliseconds */
 		const uint64_t send_timestamp)
 {
-    packetToArm[sequence_number] = cur_arm;
+    // Should we draw a new arm?
+    if (sequence_number == replan) {
+        std::cout << std::endl << "Replanning at sequence number: " 
+                  << sequence_number << std::endl;
+        // Mark the time that the packet was sent at so that we can
+        // compute the reward afterwards.
+        packetToSendTime[sequence_number] = send_timestamp;
+        Exp3();
+    }
+
+    // if (replan <= sequence_number_acked) {
+    //     compute_probabilities();
+    //     std::size_t arm = distribution(gen);
+    //     std::cout << "Randomly generated arm " << arm << std::endl;
+    //     cur_arm = arm;
+    //     cur_ws = arm_to_congestion_window(arm);
+    //     // std::cout << "Total reward thus far " << totalReward << std::endl;
+    //     std::cout << "Corresponding congestion window " << cur_ws << std::endl;
+    //     replan = sequence_number_acked + cur_ws;
+    // }
 
     DEBUGGING
     {
@@ -96,6 +137,9 @@ void Controller::datagram_was_sent(
     }
 }
 
+// RECALCULATION OF CWND SHOULD OCCUR IN THE SENDING
+// CALCULATION OF REWARD IS NOT CORRECT
+// THROUGHPUT = CWND / RTT
 void Controller::ack_received(
         /* what sequence number was acknowledged */
         const uint64_t sequence_number_acked,
@@ -106,48 +150,64 @@ void Controller::ack_received(
         /* when the ack was received (by sender) */
         const uint64_t timestamp_ack_received)
 {
+    // uint64_t interArrivalTime = max(recv_timestamp_acked - last_ts, uint64_t(1));
+    // last_ts = recv_timestamp_acked;
 
-    // RECALCULATION OF CWND SHOULD OCCUR IN THE SENDING
-    // CALCULATION OF REWARD IS NOT CORRECT
-    // THROUGHPUT = CWND / RTT
-    uint64_t interArrivalTime = max(recv_timestamp_acked - last_ts, uint64_t(1));
-    last_ts = recv_timestamp_acked;
-
-    // To-do: consider rescaling the "reward" based on what happened previously.
     ++numPackets;
-    auto probabilities = distribution.probabilities();
-    std::size_t arm = packetToArm[sequence_number_acked];
+    // Should we compute the reward?
+    auto it = packetToId.find(sequence_number_acked);
 
-    //uint64_t rtt = timestamp_ack_received - send_timestamp_acked;
-    //std::cout << "rrt: " << rtt << std::endl;
-    float reward = 0;
-    if (interArrivalTime < 100) {
-        reward = (1.0 / (interArrivalTime*cur_ws)) / (probabilities[arm]);
-    } else {
-        std::cout << "interarrivalTime " << interArrivalTime << std::endl;
-        //reset_weights();
-        cur_ws = 1;
-        cur_arm = 0;
-        return;
+    if (it != packetToId.end()) {
+        // Compute the reward for this arm.
+        auto armWindowPair = it->second;
+        std::size_t arm = armWindowPair.first;
+        std::size_t congestionWindow = armWindowPair.second;
+
+        // Reward is computed as the rate of packet acknowledgements in the time
+        // frame between the sending of the last packet and the receiving of the last
+        // packet associated with the congestion window.
+        double timeFrame = timestamp_ack_received - packetToSendTime[sequence_number_acked];
+
+        double rate = congestionWindow / timeFrame;
+        double reward = congestionWindow / probabilities[arm];
+
+        weights[arm] *= exp(gamma * reward / K);   
     }
 
-    weights[arm] *= exp(gamma * reward / K);
-    totalReward += reward;
+    // // To-do: consider rescaling the "reward" based on what happened previously.
+    // ++numPackets;
+    // auto probabilities = distribution.probabilities();
+    // std::size_t arm = packetToArm[sequence_number_acked];
+
+    // //uint64_t rtt = timestamp_ack_received - send_timestamp_acked;
+    // //std::cout << "rrt: " << rtt << std::endl;
+    // float reward = 0;
+    // if (interArrivalTime < 100) {
+    //     reward = (1.0 / (interArrivalTime*cur_ws)) / (probabilities[arm]);
+    // } else {
+    //     std::cout << "interarrivalTime " << interArrivalTime << std::endl;
+    //     cur_ws = 1;
+    //     cur_arm = 0;
+    //     return;
+    // }
+
+    // weights[arm] *= exp(gamma * reward / K);
+    // totalReward += reward;
     // std::cout << "probabilities: " << probabilities[arm] << std::endl;
     // std::cout << "reward: " << reward << std::endl;
     // std::cout << "gamma: " << gamma << std::endl;
     // std::cout << weights[arm] << std::endl;
 
-    if (replan <= sequence_number_acked) {
-        compute_probabilities();
-        std::size_t arm = distribution(gen);
-        std::cout << "Randomly generated arm " << arm << std::endl;
-        cur_arm = arm;
-        cur_ws = arm_to_congestion_window(arm);
-        // std::cout << "Total reward thus far " << totalReward << std::endl;
-        std::cout << "Corresponding congestion window " << cur_ws << std::endl;
-        replan = sequence_number_acked + cur_ws;
-    }
+    // if (replan <= sequence_number_acked) {
+    //     compute_probabilities();
+    //     std::size_t arm = distribution(gen);
+    //     std::cout << "Randomly generated arm " << arm << std::endl;
+    //     cur_arm = arm;
+    //     cur_ws = arm_to_congestion_window(arm);
+    //     // std::cout << "Total reward thus far " << totalReward << std::endl;
+    //     std::cout << "Corresponding congestion window " << cur_ws << std::endl;
+    //     replan = sequence_number_acked + cur_ws;
+    // }
 
     // if (numPackets % 1000 == 0)
     //     reset_weights();

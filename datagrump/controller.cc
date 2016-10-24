@@ -49,6 +49,28 @@ void Controller::Exp3() {
     packetToId[replan] = armCongestionWindowPair;
 }
 
+void Controller::Exp3() {
+    // Compute the probabilities associated with drawing each arm.
+    compute_probabilities();
+    // Randomly draw an arm according to the computed distribution.
+    std::size_t arm = distribution(gen);
+    //std::cout << "Randomly generated arm " << arm << std::endl;
+    cur_arm = arm;
+
+    // Map the drawn arm to the congestion window.
+    cur_ws = arm_to_congestion_window(arm);
+    //std::cout << "Corresponding congestion window " << cur_ws << std::endl;
+
+    // Replan after sending the packet with the following sequence number.
+    replan += cur_ws;
+
+    // "Tag" the packet sequence number with this arm so that the reward is
+    // calculated when the ack for the corresponding packet sequence number
+    // is received.
+    auto armCongestionWindowPair = std::make_pair(cur_arm, cur_ws);
+    packetToId[replan] = armCongestionWindowPair;
+}
+
 void Controller::reset_weights() {
     for (std::size_t i = 0; i < weights.size(); ++i) {
         weights[i] = 1;

@@ -179,6 +179,9 @@ void Controller::ack_received(
         std::cout << "reward: " << reward << std::endl;
         std::cout << "gamma: " << gamma << std::endl;
         std::cout << "weights: " << weights[arm] << std::endl;
+
+        if (numPackets % 100 == 0)
+            reset_weights();
     }
 
     // // To-do: consider rescaling the "reward" based on what happened previously.
@@ -216,8 +219,6 @@ void Controller::ack_received(
     //     replan = sequence_number_acked + cur_ws;
     // }
 
-    // if (numPackets % 1000 == 0)
-    //     reset_weights();
 
     //std::cout << "Num packets received " << ++numPackets << std::endl;
     DEBUGGING

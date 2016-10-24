@@ -109,12 +109,8 @@ void Controller::ack_received(
     uint64_t rtt = timestamp_ack_received - send_timestamp_acked;
 
     float reward = 0;
-    if (rtt < 100) {
+    if (rtt < 150) {
         reward = (1.0 / rtt) / (probabilities[arm]);
-    } else if (rtt > 200) {
-        cur_ws = 1;
-        replan = sequence_number_acked + 1;
-        return;
     }
     //float reward = (1.0/max(1.0, double(abs(timestamp_ack_received - send_timestamp_acked) - 100))) / (10*probabilities[arm]);
 

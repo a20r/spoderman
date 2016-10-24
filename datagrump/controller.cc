@@ -193,7 +193,7 @@ void Controller::ack_received(
         std::cout << "probability of this arm: " << probabilities[arm] << std::endl;
         std::cout << "reward: " << reward << std::endl;
         std::cout << "gamma: " << gamma << std::endl;
-        std::cout << "Multiplicative factor: " << multiplicativeFactor << std::endl;
+        //std::cout << "Multiplicative factor: " << multiplicativeFactor << std::endl;
         std::cout << "weights: " << weights[arm] << std::endl;
 
         last_ts = recv_timestamp_acked;

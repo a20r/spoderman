@@ -22,7 +22,7 @@ private:
     void reset_weights();
     std::size_t arm_to_congestion_window(uint64_t arm);
     void compute_probabilities();
-    void DistributeReward(std::size_t arm, double reward);
+    void DistributeReward(std::size_t arm, double rate);
 
     static const std::size_t MAX_WINDOW = 30;
     static const std::size_t DELTA_WINDOW = 3;

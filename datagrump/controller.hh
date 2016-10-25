@@ -40,7 +40,7 @@ public:
                 const uint64_t send_timestamp);
 
     void evolve_rates(double *rs, double secs);
-    void evolve(double time);
+    void evolve(double time, double *rs, double *probs);
 
     void ack_received(const uint64_t sequence_number_acked,
                 const uint64_t send_timestamp_acked,

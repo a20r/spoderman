@@ -62,37 +62,23 @@ void Controller::evolve_rates(double *rs, double secs)
     }
 }
 
-void Controller::evolve(double time)
+void Controller::evolve(double time, double *rs, double *ps)
 {
-    // _normalized = false;
 
-    /* initialize brownian motion */
     double std = vol * sqrt(time);
     normal brownian(0, std);
-    // _gaussian.calculate( stddev );
 
-
-    /* initialize new pmf */
-    // SampledFunction new_pmf( _probability_mass_function );
-    // new_pmf.for_each( [] ( const double, double & value, const unsigned int ) { value = 0; } );
 
     double new_probs[n_rates];
     double new_rates[n_rates];
-    copy(rates, rates + n_rates, new_rates);
-    copy(probs, probs + n_rates, new_probs);
-    // fill_n(new_probs, n_rates, 0.0);
-
-    // const double zero_escape_probability = 1 - poissonpdf( time * _outage_escape_rate, 0 );
-    //
-    for (int i = 0; i < n_rates; i++)
-    {
-        // cout << new_probs[i] << endl;
-    }
+    copy(rs, rs + n_rates, new_rates);
+    // copy(ps, ps + n_rates, new_probs);
+    fill_n(new_probs, n_rates, 0);
 
     for (int i = 0; i < n_rates; i++)
     {
-        double old_rate = rates[i];
-        double old_prob = probs[i];
+        double old_rate = rs[i];
+        double old_prob = ps[i];
 
         for (int j = 0; j < n_rates; j++)
         {
@@ -100,8 +86,8 @@ void Controller::evolve(double time)
             bool lt = new_rates[j] <= old_rate + 5 * std;
             if (gt and lt)
             {
-                double bottom = min_rate * (j + 1);
-                double top = min_rate * (j + 2);
+                double bottom = min_rate * (j + 1) - min_rate / 2;
+                double top = min_rate * (j + 1) + min_rate / 2;
                 double bottom_cdf = cdf(brownian, bottom - old_rate);
                 double top_cdf = cdf(brownian, top - old_rate);
                 double cont = old_prob * (top_cdf - bottom_cdf);
@@ -110,50 +96,8 @@ void Controller::evolve(double time)
         }
     }
 
-    // double f_sum = 0.0;
-    // for (int i = 0; i < n_rates; i++)
-    // {
-    //     // cout << "NEW_PROB " << new_probs[i] << endl;
-    //     f_sum += new_probs[i];
-    // }
-    //
-    // cout << "FSUM " << f_sum << endl;
-    //
-    // for (int i = 0; i < n_rates; i++)
-    // {
-    //     new_probs[i] = new_probs[i] / f_sum;
-    // }
-
-    // memcpy(probs, new_probs, n_rates);
-    // memcpy(rates, new_rates, n_rates);
-    copy(new_rates, new_rates + n_rates, rates);
-    copy(new_probs, new_probs + n_rates, probs);
-
-
-
-  // _probability_mass_function.for_each( [&]
-  //                      ( const double old_rate, const double & old_prob, const unsigned int old_index )
-  //                      {
-  //                    new_pmf.for_range( old_rate - 5 * stddev,
-  //                               old_rate + 5 * stddev,
-  //                               [&]
-  //                               ( const double new_rate, double & new_prob, const unsigned int new_index )
-  //                               {
-  //                                 double zfactor = 1.0;
-  //
-  //                                 if ( old_index == 0 ) {
-  //                               zfactor = ( new_index != 0 ) ? zero_escape_probability : (1 - zero_escape_probability);
-  //                                 }
-  //
-  //                                 double contribution = zfactor * old_prob
-  //                               * ( _gaussian.cdf( new_pmf.sample_ceil( new_rate ) - old_rate )
-  //                                   - _gaussian.cdf( new_pmf.sample_floor( new_rate ) - old_rate ) );
-  //
-  //                                 new_prob += contribution;
-  //                               } );
-  //                      } );
-  //
-  // _probability_mass_function = new_pmf;
+    copy(new_rates, new_rates + n_rates, rs);
+    copy(new_probs, new_probs + n_rates, ps);
 }
 
 void Controller::ack_received(
@@ -184,49 +128,75 @@ void Controller::ack_received(
         double fs[n_rates];
         double f_sum = 0.0;
         // evolve_rates(rates, secs);
-        evolve(secs);
+        // evolve(secs, rates, probs);
         for (int i = 0; i < n_rates; i++)
         {
             double p = pdf(poisson(rates[i] * secs), num_acks);
-            // cout << probs[i] << " " << p << " " << endl;
-            fs[i] = probs[i] * p;
-            f_sum += fs[i];
+            probs[i] = probs[i] * p;
         }
 
-        // cout << "SUM " << f_sum << endl;
+        evolve(0.1, rates, probs);
+        for (int i = 0; i < n_rates; i++)
+        {
+            f_sum += probs[i];
+        }
+
         double pred_rate = 0.0;
         for (int i = 0; i < n_rates; i++)
         {
-            probs[i] = fs[i] / f_sum;
+            probs[i] = probs[i] / f_sum;
             pred_rate += rates[i] * probs[i];
         }
 
-        // double forecast_rates[n_rates];
-        // memcpy(forecast_rates, rates, n_rates);
-        //
+        double forecast_rates[n_rates];
+        double forecast_probs[n_rates];
+        copy(rates, rates + n_rates, forecast_rates);
+        copy(probs, probs + n_rates, forecast_probs);
+
         // int new_ws = 0;
         // int last_ws = 0;
         // int queue_estimate = in_transit;
         // for (int tick = 0; tick < 8; tick++)
         // {
-        //     evolve_rates(forecast_rates, tick_length * 0.001);
+        //     evolve(tick_length * 0.001, forecast_rates, forecast_probs);
+        //
+        //     double f_sum = 0.0;
+        //     for (int i = 0; i < n_rates; i++)
+        //     {
+        //         f_sum += forecast_probs[i];
+        //     }
+        //
         //     double pred_rate = 0.0;
         //     for (int i = 0; i < n_rates; i++)
         //     {
-        //         pred_rate += forecast_rates[i] * probs[i];
+        //         forecast_probs[i] /= f_sum;
+        //         pred_rate += forecast_rates[i] * forecast_probs[i];
         //     }
         //
-        //     double adjusted_rate = pred_rate * 100 * 0.001;
+        //     double adjusted_rate = pred_rate * 0.001 * 100; //tick_length;
         //     int expected_drain = quantile(poisson(adjusted_rate), 0.05);
-        //     queue_estimate = max(queue_estimate - expected_drain, 0);
-        //     int to_send = max(queue_estimate - expected_drain, 1);
-        //     queue_estimate += (to_send - expected_drain);
-        //     queue_estimate = max(queue_estimate, 1);
-        //
+        //     // cout << expected_drain << endl;
+        //     int safe_to_send = max(expected_drain - queue_estimate, 0);
+        //     new_ws += safe_to_send;
+        //     queue_estimate = max(queue_estimate + safe_to_send, 0);
         // }
 
-        cout << "RATE " << pred_rate << endl;
-        cur_ws = max(quantile(poisson(pred_rate * 0.1), 0.05), 10.0);
+        // cur_ws = max(new_ws, 10);
+        // cur_ws = 2;
+        // cout << "RATE " << pred_rate << endl;
+        int expected_drain = quantile(poisson(pred_rate * 0.1), 0.05);
+        // cout << expected_drain << " " << in_transit << endl;
+        int d_cur_ws = expected_drain - in_transit;
+        // if (d_cur_ws > 0)
+        // {
+        //     cur_ws += ceil(0.7 * d_cur_ws);
+        // }
+        // else
+        // {
+        //     cur_ws += d_cur_ws;
+        // }
+        cur_ws += ceil(0.7 * d_cur_ws);
+        cur_ws = max(cur_ws, 3);
         cout << "CW " << cur_ws << endl;
         num_acks = 0;
     }
@@ -234,5 +204,5 @@ void Controller::ack_received(
 
 unsigned int Controller::timeout_ms()
 {
-    return 1000;
+    return 30;
 }

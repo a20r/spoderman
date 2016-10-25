@@ -21,6 +21,7 @@ private:
     int num_acks = 0;
     ts_t tick_length = 20;
     ts_t start_time = 0;
+    ts_t send_time = 0;
     ts_t delay_target = 100;
     ts_t forecast_length = 160;
     int vol = 200;

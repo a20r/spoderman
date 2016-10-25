@@ -279,5 +279,5 @@ void Controller::ack_received(
 
 unsigned int Controller::timeout_ms()
 {
-    return 1000;
+    return 20;
 }

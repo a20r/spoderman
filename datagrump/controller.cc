@@ -38,32 +38,22 @@ void Controller::datagram_was_sent(
         /* in milliseconds */
 		const uint64_t send_timestamp)
 {
+    if (last_time_sent == 0)
+    {
+        last_time_sent = send_timestamp;
+    }
+
+    sent_counter++;
+    double secs = 0.001 * (send_timestamp - last_time_sent);
+    if (secs > 0.02)
+    {
+        send_rate = sent_counter / secs;
+        sent_counter = 0;
+        // cout << send_rate << " " << link_rate << endl;
+        last_time_sent = send_timestamp;
+    }
+
     in_transit++;
-}
-
-long factorial(long x)
-{
-    long prod = 1;
-    for (long i = 1; i <= x; i++)
-    {
-        prod *= i;
-    }
-
-    return prod;
-}
-
-void Controller::evolve_rates(double *rs, double secs)
-{
-    std::normal_distribution<double> dist(0, sqrt(secs) * vol);
-    double noise = dist(gen);
-    for (int i = 0; i < n_rates; i++)
-    {
-        rs[i] += noise;
-        if (rs[i] < min_rate)
-        {
-            rs[i] = min_rate;
-        }
-    }
 }
 
 void Controller::evolve(double time, double *rs, double *ps)
@@ -86,8 +76,8 @@ void Controller::evolve(double time, double *rs, double *ps)
 
         for (int j = 0; j < n_rates; j++)
         {
-            bool gt = new_rates[j] >= old_rate - 3 * std;
-            bool lt = new_rates[j] <= old_rate + 3 * std;
+            bool gt = new_rates[j] >= old_rate - 5 * std;
+            bool lt = new_rates[j] <= old_rate + 5 * std;
             if (gt and lt)
             {
                 double bottom = min_rate * (j + 1) - min_rate / 2;
@@ -118,99 +108,66 @@ void Controller::ack_received(
     if (start_time == 0)
     {
         start_time = recv_timestamp_acked;
-        send_time = send_timestamp_acked;
     }
 
     ts_t time_elapsed = recv_timestamp_acked - start_time;
-    ts_t send_time_elapsed = send_timestamp_acked - send_time;
     double secs = time_elapsed / 1000.0;
     num_acks++;
     if (time_elapsed > tick_length)
     {
-        // cout << "TIME: " << time_elapsed << endl;
-        double send_rate = 1000 * num_acks / (double) send_time_elapsed;
-        double escape_rate = 1000 * num_acks / (double) time_elapsed;
-        // cout << send_rate - escape_rate << endl;
         start_time = recv_timestamp_acked;
-        send_time = send_timestamp_acked;
 
         double fs[n_rates];
         double f_sum = 0.0;
-        // evolve_rates(rates, secs);
         evolve(secs, rates, probs);
         for (int i = 0; i < n_rates; i++)
         {
             double p = pdf(poisson(rates[i] * secs), num_acks);
             probs[i] = probs[i] * p;
-        }
-
-        // evolve(0.1, rates, probs);
-        for (int i = 0; i < n_rates; i++)
-        {
             f_sum += probs[i];
         }
 
-        double pred_rate = 0.0;
         for (int i = 0; i < n_rates; i++)
         {
             probs[i] = probs[i] / f_sum;
-            pred_rate += rates[i] * probs[i];
         }
+
 
         double forecast_rates[n_rates];
         double forecast_probs[n_rates];
         copy(rates, rates + n_rates, forecast_rates);
         copy(probs, probs + n_rates, forecast_probs);
 
-        int new_ws = 0;
-        int last_ws = 0;
-        int queue_estimate = in_transit;
-        // for (int tick = 0; tick < 8; tick++)
-        // {
-        //     evolve(tick_length * 0.001, forecast_rates, forecast_probs);
-        //
-        //     double f_sum = 0.0;
-        //     for (int i = 0; i < n_rates; i++)
-        //     {
-        //         f_sum += forecast_probs[i];
-        //     }
-        //
-        //     double pred_rate = 0.0;
-        //     for (int i = 0; i < n_rates; i++)
-        //     {
-        //         forecast_probs[i] /= f_sum;
-        //         pred_rate += forecast_rates[i] * forecast_probs[i];
-        //     }
-        //
-        //     double adjusted_rate = pred_rate * 0.1;
-        //     int expected_drain = quantile(poisson(adjusted_rate), 0.05);
-        //     int d_cur_ws = expected_drain - queue_estimate;
-        //     int safe_to_send = ceil(0.7 * d_cur_ws);
-        //     new_ws += max(safe_to_send - last_ws, 0);
-        //     last_ws = new_ws;
-        //     queue_estimate = max(queue_estimate + safe_to_send - expected_drain, 0);
-        // }
+        f_sum = 0.0;
+        evolve(0.1, forecast_rates, forecast_probs);
+        for (int i = 0; i < n_rates; i++)
+        {
+            f_sum += forecast_probs[i];
+        }
 
-        // cur_ws = max(new_ws, 3);
+        double pred_rate = 0.0;
+        double max_prob = 0.0;
+        for (int i = 0; i < n_rates; i++)
+        {
+            forecast_probs[i] = forecast_probs[i] / f_sum;
+            pred_rate += forecast_rates[i] * forecast_probs[i];
+        }
 
-        // cur_ws = max(new_ws, 10);
-        // cur_ws = 2;
-        // cout << "RATE " << pred_rate << endl;
-
-        int expected_drain = quantile(poisson(pred_rate * 0.1), 0.05);
-        // cout << expected_drain << " " << in_transit << endl;
+        int expected_drain = quantile(poisson(pred_rate * 0.09), 0.05);
         int d_cur_ws = expected_drain - in_transit;
-        // if (d_cur_ws > 0)
-        // {
-        //     cur_ws += ceil(0.7 * d_cur_ws);
-        // }
-        // else
-        // {
-        //     cur_ws += d_cur_ws;
-        // }
-        cur_ws += ceil(0.7 * d_cur_ws);
-        cur_ws = min(max(cur_ws, 3), 70);
+        if (d_cur_ws < 0)
+        {
+            cur_ws += ceil(0.3 * d_cur_ws);
+        }
+        else
+        {
+            cur_ws += ceil(0.8 * d_cur_ws);
+        }
+
+        cur_ws = min(max(cur_ws, 3), 100);
         cout << "CW " << cur_ws << endl;
+        link_rate = pred_rate;
+        last_error = d_cur_ws;
         num_acks = 0;
     }
 }

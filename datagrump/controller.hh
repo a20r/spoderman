@@ -21,9 +21,12 @@ private:
     int num_acks = 0;
     ts_t tick_length = 20;
     ts_t start_time = 0;
-    ts_t send_time = 0;
+    ts_t last_time_sent = 0;
     ts_t delay_target = 100;
     ts_t forecast_length = 160;
+    double last_error = 0.0;
+    int sent_counter = 0;
+    double send_rate = 0.0;
     int vol = 200;
     default_random_engine gen;
     int n_rates = 256;
